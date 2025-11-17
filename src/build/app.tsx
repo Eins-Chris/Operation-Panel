@@ -78,14 +78,16 @@ const App: React.FC = () => {
 
     // If two fingers touch → pinch mode
     if (e.nativeEvent instanceof PointerEvent) {
-      const activeTouches = (
-        document as any
-      )._activePointers = (document as any)._activePointers || new Map();
+      const docAny = document as any;
+      docAny._activePointers =
+        docAny._activePointers || new Map<number, { x: number; y: number }>();
+      const activeTouches: Map<number, { x: number; y: number }> = docAny._activePointers;
 
       activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
       if (activeTouches.size === 2) {
-        const [a, b] = Array.from(activeTouches.values());
+        const vals = Array.from(activeTouches.values()) as { x: number; y: number }[];
+        const [a, b] = vals;
         const dist = Math.hypot(b.x - a.x, b.y - a.y);
 
         setPinchPanelId(panel.id);
@@ -103,9 +105,10 @@ const App: React.FC = () => {
   // Touch Move (Drag or Pinch)
   // -----------------------------
   const handlePointerMove = (e: React.PointerEvent) => {
-    const activeTouches = (
-      document as any
-    )._activePointers = (document as any)._activePointers || new Map();
+    const docAny = document as any;
+    docAny._activePointers =
+      docAny._activePointers || new Map<number, { x: number; y: number }>();
+    const activeTouches: Map<number, { x: number; y: number }> = docAny._activePointers;
 
     if (pinchPanelId && initialPinchDist) {
       activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -114,7 +117,8 @@ const App: React.FC = () => {
         const panel = panels.find((p) => p.id === pinchPanelId);
         if (!panel) return;
 
-        const [a, b] = Array.from(activeTouches.values());
+        const vals = Array.from(activeTouches.values()) as { x: number; y: number }[];
+        const [a, b] = vals;
         const currentDist = Math.hypot(b.x - a.x, b.y - a.y);
         const scale = currentDist / initialPinchDist;
 
@@ -158,9 +162,10 @@ const App: React.FC = () => {
   // Touch Release
   // -----------------------------
   const handlePointerUp = (e: React.PointerEvent) => {
-    const activeTouches = (
-      document as any
-    )._activePointers = (document as any)._activePointers || new Map();
+    const docAny = document as any;
+    docAny._activePointers =
+      docAny._activePointers || new Map<number, { x: number; y: number }>();
+    const activeTouches: Map<number, { x: number; y: number }> = docAny._activePointers;
 
     activeTouches.delete(e.pointerId);
 
