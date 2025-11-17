@@ -232,6 +232,7 @@ const App: React.FC = () => {
           >
             {/* Content */}
             {panel.content}
+            <p>Hello world!</p>
 
             {/* Lock icon bottom-left */}
             <div
