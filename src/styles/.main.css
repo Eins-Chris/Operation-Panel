@@ -4,6 +4,10 @@ body {
     margin: 0;
 }
 
+body.active {
+    background: radial-gradient(#222922, #000500);
+}
+
 .pane {
     background-color: rgba(0, 140, 255, 0.1);
     backdrop-filter: blur(4px);

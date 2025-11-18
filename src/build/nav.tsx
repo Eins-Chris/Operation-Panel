@@ -36,43 +36,43 @@ const BottomNavbar: React.FC = () => {
 
     return (
         <nav className="navbar pane">
-        <div className={`dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
-            <button 
-            className={`square-btn ${open ? "open" : ""} pane`}
-            aria-haspopup="true"
-            aria-expanded={open}
-            aria-controls="dropdownMenu"
-            title="Settings"
-            onClick={(e) => {
-                e.stopPropagation();
-                toggleMenu();
-            }}
-            ref={buttonRef}
-            >
-                <span className="bar bar1"></span>
-                <span className="bar bar2"></span>
-                <span className="bar bar3"></span>
-                <span className="sr-only">Menü öffnen</span>
-            </button>
+            <div className={`dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
+                <button 
+                className={`square-btn ${open ? "open" : ""} pane`}
+                aria-haspopup="true"
+                aria-expanded={open}
+                aria-controls="dropdownMenu"
+                title="Settings"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMenu();
+                }}
+                ref={buttonRef}
+                >
+                    <span className="bar bar1"></span>
+                    <span className="bar bar2"></span>
+                    <span className="bar bar3"></span>
+                    <span className="sr-only">Menü öffnen</span>
+                </button>
 
-            <ul
-            id="dropdownMenu"
-            className="dropdown-menu"
-            role="menu"
-            aria-hidden={!open}
-            ref={menuRef}
-            >
-                <li role="menuitem" tabIndex={-1}>
-                    <button>Aktion 1</button>
-                </li>
-                <li role="menuitem" tabIndex={-1}>
-                    <button>Aktion 2</button>
-                </li>
-                <li role="menuitem" tabIndex={-1}>
-                    <button>Einstellungen</button>
-                </li>
-            </ul>
-        </div>
+                <ul
+                id="dropdownMenu"
+                className="dropdown-menu"
+                role="menu"
+                aria-hidden={!open}
+                ref={menuRef}
+                >
+                    <li role="menuitem" tabIndex={-1}>
+                        <button>Aktion 1</button>
+                    </li>
+                    <li role="menuitem" tabIndex={-1}>
+                        <button>Aktion 2</button>
+                    </li>
+                    <li role="menuitem" tabIndex={-1}>
+                        <button>Einstellungen</button>
+                    </li>
+                </ul>
+            </div>
         </nav>
     )
 }
