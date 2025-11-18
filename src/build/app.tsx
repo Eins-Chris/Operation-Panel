@@ -1,306 +1,289 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../styles/app.css";
 
 interface Panel {
-    id: string;
-    row: number;
-    col: number;
-    widthSlots: number;
-    heightSlots: number;
-    content: React.ReactNode;
-    interactive: boolean;
+  id: string;
+  row: number;
+  col: number;
+  widthSlots: number;
+  heightSlots: number;
+  content: React.ReactNode;
+  interactive: boolean;
+  resizeModeActive?: boolean; // true, wenn Resize-Modus aktiv
 }
 
+type ResizeDirection =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | null;
+
 const App: React.FC = () => {
-    const numCols = 8;
-    const numRows = 4;
-    const slotWidth = 100 / numCols;
-    const slotHeight = 100 / numRows;
+  const numCols = 8;
+  const numRows = 4;
+  const slotWidth = 100 / numCols;
+  const slotHeight = 100 / numRows;
 
-    const [panels, setPanels] = useState<Panel[]>([
-        {
-            id: "panel1",
-            row: 0,
-            col: 0,
-            widthSlots: 2,
-            heightSlots: 2,
-            content: "Panel 1",
-            interactive: true,
-        },
-    ]);
+  const [panels, setPanels] = useState<Panel[]>([
+    { id: "panel1", row: 0, col: 0, widthSlots: 2, heightSlots: 2, content: "Panel 1", interactive: true },
+  ]);
 
-    const [draggingPanelId, setDraggingPanelId] = useState<string | null>(null);
-    const [dragPos, setDragPos] = useState<{ row: number; col: number } | null>(null);
+  const [draggingPanelId, setDraggingPanelId] = useState<string | null>(null);
+  const [dragPos, setDragPos] = useState<{ row: number; col: number } | null>(null);
 
-    // pinch state
-    const [pinchPanelId, setPinchPanelId] = useState<string | null>(null);
-    const [initialFingerBox, setInitialFingerBox] = useState<{
-        minX: number;
-        maxX: number;
-        minY: number;
-        maxY: number;
-    } | null>(null);
-    const [initialPanelState, setInitialPanelState] = useState<Panel | null>(null);
+  const [resizingPanelId, setResizingPanelId] = useState<string | null>(null);
+  const [resizeDirection, setResizeDirection] = useState<ResizeDirection>(null);
+  const [resizeStart, setResizeStart] = useState<{ x: number; y: number; row: number; col: number; w: number; h: number } | null>(null);
 
-    // track touch pointers
-    const activeTouches: Map<number, { x: number; y: number }> = (document as any)._activePointers ||
-        ((document as any)._activePointers = new Map());
+  const allowCollision = false; // optional Kollision
 
-    // -------------------------
-    // Check collisions
-    // -------------------------
-    const isSlotFree = (panel: Panel, row: number, col: number) => {
-        for (const other of panels) {
-            if (panel.id === other.id) continue;
+  // --------------------------
+  // Collision Check
+  // --------------------------
+  const isSlotFree = (panel: Panel, row: number, col: number, w: number, h: number) => {
+    if (allowCollision) return true;
+    for (const other of panels) {
+      if (other.id === panel.id) continue;
+      const overlapX = col < other.col + other.widthSlots && col + w > other.col;
+      const overlapY = row < other.row + other.heightSlots && row + h > other.row;
+      if (overlapX && overlapY) return false;
+    }
+    return true;
+  };
 
-            const overlapX =
-                col < other.col + other.widthSlots &&
-                col + panel.widthSlots > other.col;
-            const overlapY =
-                row < other.row + other.heightSlots &&
-                row + panel.heightSlots > other.row;
-
-            if (overlapX && overlapY) return false;
-        }
-        return true;
-    };
-
-    // ------------------------------------------------------------
-    // Pointer Down
-    // ------------------------------------------------------------
-    const handlePointerDown = (e: React.PointerEvent, panel: Panel) => {
-        if (!panel.interactive) return;
-
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-        activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-        // If two fingers → PINCH MODE
-        if (activeTouches.size === 2) {
-            const pts = Array.from(activeTouches.values());
-            const [a, b] = pts;
-
-            // store finger bounding box
-            const fingerBox = {
-                minX: Math.min(a.x, b.x),
-                maxX: Math.max(a.x, b.x),
-                minY: Math.min(a.y, b.y),
-                maxY: Math.max(a.y, b.y),
-            };
-
-            setPinchPanelId(panel.id);
-            setInitialFingerBox(fingerBox);
-            setInitialPanelState({ ...panel });
-
-            return;
-        }
-
-        // otherwise drag
-        setDraggingPanelId(panel.id);
-        setDragPos({ row: panel.row, col: panel.col });
-    };
-
-    // ------------------------------------------------------------
-    // Pointer Move
-    // ------------------------------------------------------------
-    const handlePointerMove = (e: React.PointerEvent) => {
-        activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-        // -------------------------
-        // PINCH RESIZE
-        // -------------------------
-        if (pinchPanelId && initialFingerBox && initialPanelState) {
-            if (activeTouches.size !== 2) return;
-
-            const panel = panels.find((p) => p.id === pinchPanelId);
-            if (!panel) return;
-
-            const pts = Array.from(activeTouches.values());
-            const [a, b] = pts;
-
-            const currBox = {
-                minX: Math.min(a.x, b.x),
-                maxX: Math.max(a.x, b.x),
-                minY: Math.min(a.y, b.y),
-                maxY: Math.max(a.y, b.y),
-            };
-
-            // -------------------------
-            // Compute scale in each direction
-            // -------------------------
-            const scaleX =
-                (currBox.maxX - currBox.minX) /
-                (initialFingerBox.maxX - initialFingerBox.minX);
-
-            const scaleY =
-                (currBox.maxY - currBox.minY) /
-                (initialFingerBox.maxY - initialFingerBox.minY);
-
-            // Resize relative to PINCH rectangle
-            let newWidth = Math.round(initialPanelState.widthSlots * scaleX);
-            let newHeight = Math.round(initialPanelState.heightSlots * scaleY);
-
-            newWidth = Math.max(1, Math.min(numCols, newWidth));
-            newHeight = Math.max(1, Math.min(numRows, newHeight));
-
-            // ------------------------------------------------
-            // Edge logic: determine WHICH corner is fixed:
-            //
-            // If the two touches are:
-            //   a.x < b.x  AND  a.y < b.y  → fingers at TL & BR → anchor = opposite corner where no fingers are
-            //
-            // We use relative direction sign to position the panel.
-            // ------------------------------------------------
-
-            let anchorCol = initialPanelState.col;
-            let anchorRow = initialPanelState.row;
-
-            // Finger positions relative to box
-            const left = currBox.minX;
-            const top = currBox.minY;
-
-            const leftInitial = initialFingerBox.minX;
-            const topInitial = initialFingerBox.minY;
-
-            const movedLeft = left < leftInitial;
-            const movedUp = top < topInitial;
-
-            // Expand left?
-            if (movedLeft) {
-                anchorCol = initialPanelState.col + initialPanelState.widthSlots - newWidth;
-            }
-            // Expand up?
-            if (movedUp) {
-                anchorRow = initialPanelState.row + initialPanelState.heightSlots - newHeight;
-            }
-
-            anchorCol = Math.max(0, Math.min(numCols - newWidth, anchorCol));
-            anchorRow = Math.max(0, Math.min(numRows - newHeight, anchorRow));
-
-            setPanels((prev) =>
-                prev.map((p) =>
-                    p.id === panel.id
-                        ? {
-                              ...p,
-                              widthSlots: newWidth,
-                              heightSlots: newHeight,
-                              col: anchorCol,
-                              row: anchorRow,
-                          }
-                        : p
-                )
-            );
-
-            return;
-        }
-
-        // -------------------------
-        // DRAGGING
-        // -------------------------
-        if (!draggingPanelId) return;
-
-        const panel = panels.find((p) => p.id === draggingPanelId);
-        if (!panel) return;
-
-        const contentRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        const x = (e.clientX - contentRect.left) / contentRect.width;
-        const y = (e.clientY - contentRect.top) / contentRect.height;
-
-        const col = Math.min(
-            Math.floor(x * numCols),
-            numCols - panel.widthSlots
-        );
-        const row = Math.min(
-            Math.floor(y * numRows),
-            numRows - panel.heightSlots
-        );
-
-        setDragPos({ row, col });
-    };
-
-    // ------------------------------------------------------------
-    // Pointer Up
-    // ------------------------------------------------------------
-    const handlePointerUp = (e: React.PointerEvent) => {
-        activeTouches.delete(e.pointerId);
-
-        // finish pinch
-        if (pinchPanelId && activeTouches.size < 2) {
-            setPinchPanelId(null);
-            setInitialFingerBox(null);
-            setInitialPanelState(null);
-        }
-
-        // finish drag
-        if (draggingPanelId && dragPos) {
-            const panel = panels.find((p) => p.id === draggingPanelId);
-            if (panel && isSlotFree(panel, dragPos.row, dragPos.col)) {
-                setPanels((prev) =>
-                    prev.map((p) =>
-                        p.id === panel.id
-                            ? { ...p, row: dragPos.row, col: dragPos.col }
-                            : p
-                    )
-                );
-            }
-        }
-
-        setDraggingPanelId(null);
-        setDragPos(null);
-    };
-
-    // toggle interactive
-    const toggleInteractive = (id: string) => {
-        setPanels((prev) =>
-            prev.map((p) =>
-                p.id === id ? { ...p, interactive: !p.interactive } : p
-            )
-        );
-    };
-
-    // -------------------------
-    // RENDER
-    // -------------------------
-    return (
-        <div
-            id="content"
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-        >
-            {panels.map((panel) => {
-                const pos =
-                    draggingPanelId === panel.id && dragPos
-                        ? dragPos
-                        : { row: panel.row, col: panel.col };
-
-                return (
-                    <div
-                        className="panel pane"
-                        key={panel.id}
-                        style={{
-                            top: `${pos.row * slotHeight}%`,
-                            left: `${pos.col * slotWidth}%`,
-                            width: `${panel.widthSlots * slotWidth}%`,
-                            height: `${panel.heightSlots * slotHeight}%`,
-                        }}
-                        onPointerDown={(e) => handlePointerDown(e, panel)}
-                    >
-                        {panel.content}
-
-                        <div
-                            className="lock pane"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                toggleInteractive(panel.id);
-                            }}
-                        >
-                            {panel.interactive ? "🔓" : "🔒"}
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+  // --------------------------
+  // Toggle Interactive
+  // --------------------------
+  const toggleInteractive = (id: string) => {
+    setPanels(prev =>
+      prev.map(p => (p.id === id ? { ...p, interactive: !p.interactive } : p))
     );
+  };
+
+  // --------------------------
+  // Toggle ResizeMode per Panel (DoubleTap)
+  // --------------------------
+  const toggleResizeMode = (id: string) => {
+    setPanels(prev =>
+      prev.map(p => (p.id === id ? { ...p, resizeModeActive: !p.resizeModeActive } : p))
+    );
+  };
+
+  // --------------------------
+  // DoubleTap Detection
+  // --------------------------
+  const lastTap = useRef<{ [key: string]: number }>({});
+  const handleTap = (panelId: string) => {
+    const now = Date.now();
+    const last = lastTap.current[panelId] || 0;
+    if (now - last < 300) {
+      toggleResizeMode(panelId);
+      lastTap.current[panelId] = 0;
+    } else {
+      lastTap.current[panelId] = now;
+    }
+  };
+
+  // --------------------------
+  // Pointer Down
+  // --------------------------
+  const handlePointerDown = (e: React.PointerEvent, panel: Panel, direction: ResizeDirection = null) => {
+    if (!panel.interactive) return;
+    e.stopPropagation();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+    if (panel.resizeModeActive && direction) {
+      // Resize starten
+      setResizingPanelId(panel.id);
+      setResizeDirection(direction);
+      setResizeStart({
+        x: e.clientX,
+        y: e.clientY,
+        row: panel.row,
+        col: panel.col,
+        w: panel.widthSlots,
+        h: panel.heightSlots,
+      });
+    } else if (!panel.resizeModeActive) {
+      // Drag starten
+      setDraggingPanelId(panel.id);
+      setDragPos({ row: panel.row, col: panel.col });
+    }
+  };
+
+  // --------------------------
+  // Pointer Move
+  // --------------------------
+  const handlePointerMove = (e: React.PointerEvent) => {
+    // Resize
+    if (resizingPanelId && resizeStart && resizeDirection) {
+      const panel = panels.find(p => p.id === resizingPanelId);
+      if (!panel) return;
+
+      let deltaX = Math.round((e.clientX - resizeStart.x) / (slotWidth * window.innerWidth / 100));
+      let deltaY = Math.round((e.clientY - resizeStart.y) / (slotHeight * window.innerHeight / 100));
+
+      let newRow = resizeStart.row;
+      let newCol = resizeStart.col;
+      let newW = resizeStart.w;
+      let newH = resizeStart.h;
+
+      switch (resizeDirection) {
+        case "top-left":
+          newCol = resizeStart.col + deltaX;
+          newRow = resizeStart.row + deltaY;
+          newW = resizeStart.w - deltaX;
+          newH = resizeStart.h - deltaY;
+          break;
+        case "top-right":
+          newRow = resizeStart.row + deltaY;
+          newW = resizeStart.w + deltaX;
+          newH = resizeStart.h - deltaY;
+          break;
+        case "bottom-left":
+          newCol = resizeStart.col + deltaX;
+          newW = resizeStart.w - deltaX;
+          newH = resizeStart.h + deltaY;
+          break;
+        case "bottom-right":
+          newW = resizeStart.w + deltaX;
+          newH = resizeStart.h + deltaY;
+          break;
+        case "top":
+          newRow = resizeStart.row + deltaY;
+          newH = resizeStart.h - deltaY;
+          break;
+        case "bottom":
+          newH = resizeStart.h + deltaY;
+          break;
+        case "left":
+          newCol = resizeStart.col + deltaX;
+          newW = resizeStart.w - deltaX;
+          break;
+        case "right":
+          newW = resizeStart.w + deltaX;
+          break;
+      }
+
+      // Limits
+      newW = Math.max(1, Math.min(numCols - newCol, newW));
+      newH = Math.max(1, Math.min(numRows - newRow, newH));
+      newCol = Math.max(0, Math.min(numCols - newW, newCol));
+      newRow = Math.max(0, Math.min(numRows - newH, newRow));
+
+      if (!isSlotFree(panel, newRow, newCol, newW, newH)) return;
+
+      setPanels(prev =>
+        prev.map(p =>
+          p.id === panel.id ? { ...p, row: newRow, col: newCol, widthSlots: newW, heightSlots: newH } : p
+        )
+      );
+      return;
+    }
+
+    // Drag
+    if (draggingPanelId && !resizingPanelId) {
+      const panel = panels.find(p => p.id === draggingPanelId);
+      if (!panel) return;
+
+      const contentRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = (e.clientX - contentRect.left) / contentRect.width;
+      const y = (e.clientY - contentRect.top) / contentRect.height;
+
+      const col = Math.min(Math.floor(x * numCols), numCols - panel.widthSlots);
+      const row = Math.min(Math.floor(y * numRows), numRows - panel.heightSlots);
+
+      setDragPos({ row, col });
+    }
+  };
+
+  // --------------------------
+  // Pointer Up
+  // --------------------------
+  const handlePointerUp = () => {
+    if (draggingPanelId && dragPos) {
+      const panel = panels.find(p => p.id === draggingPanelId);
+      if (panel && isSlotFree(panel, dragPos.row, dragPos.col, panel.widthSlots, panel.heightSlots)) {
+        setPanels(prev =>
+          prev.map(p => (p.id === panel.id ? { ...p, row: dragPos.row!, col: dragPos.col! } : p))
+        );
+      }
+    }
+
+    setDraggingPanelId(null);
+    setDragPos(null);
+    setResizingPanelId(null);
+    setResizeDirection(null);
+    setResizeStart(null);
+  };
+
+  // --------------------------
+  // RENDER
+  // --------------------------
+  return (
+    <div
+      id="content"
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
+      {panels.map(panel => {
+        const pos = draggingPanelId === panel.id && dragPos ? dragPos : { row: panel.row, col: panel.col };
+
+        return (
+          <div
+            key={panel.id}
+            className="panel pane"
+            style={{
+              position: "absolute",
+              top: `${pos.row * slotHeight}%`,
+              left: `${pos.col * slotWidth}%`,
+              width: `${panel.widthSlots * slotWidth}%`,
+              height: `${panel.heightSlots * slotHeight}%`,
+              border: "2px solid #333",
+              boxSizing: "border-box",
+              touchAction: "none",
+              userSelect: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {panel.content}
+
+            {/* Lock Symbol */}
+            <div
+              className="lock pane"
+              style={{ position: "absolute", bottom: 0, left: 0, cursor: "pointer" }}
+              onClick={e => { e.stopPropagation(); toggleInteractive(panel.id); }}
+            >
+              {panel.interactive ? "🔓" : "🔒"}
+            </div>
+
+            {/* Resize Handles */}
+            {panel.interactive && (
+              <>
+                {["top-left","top-right","bottom-left","bottom-right","top","bottom","left","right"].map((dir) => (
+                  <div
+                    key={dir}
+                    className={`resize-handle ${dir}`}
+                    onPointerDown={e => handlePointerDown(e, panel, dir as ResizeDirection)}
+                    onPointerUp={() => handleTap(panel.id)} // DoubleTap Detection
+                  />
+                ))}
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 export default App;
