@@ -38,7 +38,7 @@ const BottomNavbar: React.FC = () => {
         <nav className="navbar pane">
         <div className={`dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
             <button 
-            className={`square-btn ${open ? "open" : ""} panel`}
+            className={`square-btn ${open ? "open" : ""} pane`}
             aria-haspopup="true"
             aria-expanded={open}
             aria-controls="dropdownMenu"

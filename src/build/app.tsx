@@ -30,10 +30,37 @@ const [panels, setPanels] = useState<Panel[]>([
     {
     id: "panel2",
     row: 2,
-    col: 2,
+    col: 0,
     widthSlots: 2,
     heightSlots: 2,
     content: "Panel 2",
+    interactive: false,
+    },
+    {
+    id: "panel3",
+    row: 0,
+    col: 2,
+    widthSlots: 2,
+    heightSlots: 2,
+    content: "Panel 3",
+    interactive: true,
+    },
+    {
+    id: "panel4",
+    row: 2,
+    col: 2,
+    widthSlots: 2,
+    heightSlots: 2,
+    content: "Panel 4",
+    interactive: false,
+    },
+    {
+    id: "panel5",
+    row: 0,
+    col: 4,
+    widthSlots: 4,
+    heightSlots: 4,
+    content: "Panel 5",
     interactive: false,
     },
 ]);
@@ -161,10 +188,10 @@ return (
             className="panel pane"
             key={panel.id}
             style={{
-            top: `${pos.row * slotHeight}%`,
-            left: `${pos.col * slotWidth}%`,
-            width: `${panel.widthSlots * slotWidth}%`,
-            height: `${panel.heightSlots * slotHeight}%`,
+            top: `${(pos.row * slotHeight)}%`,
+            left: `${(pos.col * slotWidth)}%`,
+            width: `${(panel.widthSlots * slotWidth)}%`,
+            height: `${(panel.heightSlots * slotHeight)}%`,
             }}
             onPointerDown={(e) => handlePointerDown(e, panel)}
         >
