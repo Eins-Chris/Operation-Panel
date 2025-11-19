@@ -1,34 +1,42 @@
 import React, { useState } from "react";
 import "../styles/app.css";
-import Load from './load.tsx'
+import Load from "./load";
 
 interface Panel {
-    id: string;
-    row: number;
-    col: number;
-    widthSlots: number;
-    heightSlots: number;
-    /* content: React.ReactNode; */
-    interactive: boolean;
+id: string;
+row: number;
+col: number;
+widthSlots: number;
+heightSlots: number;
+interactive: boolean;
 }
 
+type ResizeDir =
+| "left"
+| "right"
+| "top"
+| "bottom"
+| "top-left"
+| "top-right"
+| "bottom-left"
+| "bottom-right";
+
 const App: React.FC = () => {
-    // -----------------------------------------------------------
+    // -----------------------------
     // GRID SETTINGS
-    // -----------------------------------------------------------
+    // -----------------------------
     const numCols = 8;
     const numRows = 4;
 
     const slotWidth = 100 / numCols;
     const slotHeight = 100 / numRows;
 
-    // Abstand in vh:
-    const borderMarginVH = 0.25; // zum Rand
-    const panelGapVH = 0.75; // zwischen Panels
+    const borderMarginVH = 0.25;
+    const panelGapVH = 0.75;
 
-    // -----------------------------------------------------------
+    // -----------------------------
     // PANELS
-    // -----------------------------------------------------------
+    // -----------------------------
     const [panels, setPanels] = useState<Panel[]>([
         {
         id: "panel1",
@@ -45,23 +53,7 @@ const App: React.FC = () => {
         widthSlots: 2,
         heightSlots: 2,
         interactive: false,
-        },/* 
-        {
-        id: "panel3",
-        row: 0,
-        col: 2,
-        widthSlots: 2,
-        heightSlots: 2,
-        interactive: true,
         },
-        {
-        id: "panel4",
-        row: 2,
-        col: 2,
-        widthSlots: 2,
-        heightSlots: 2,
-        interactive: false,
-        }, */
         {
         id: "panel5",
         row: 0,
@@ -72,94 +64,191 @@ const App: React.FC = () => {
         },
     ]);
 
-    // -----------------------------------------------------------
+    // -----------------------------
     // DRAGGING
-    // -----------------------------------------------------------
-    const [draggingPanelId, setDraggingPanelId] = useState<string | null>(null);
-    const [dragPos, setDragPos] = useState<{ row: number; col: number } | null>(null);
+    // -----------------------------
+    const [draggingId, setDraggingId] = useState<string | null>(null);
+    const [dragPos, setDragPos] =
+        useState<{ row: number; col: number } | null>(null);
 
-    // -----------------------------------------------------------
-    // COLLISION CHECK
-    // -----------------------------------------------------------
-    const isSlotFree = (panel: Panel, row: number, col: number) => {
+    // -----------------------------
+    // RESIZING
+    // -----------------------------
+    const [resizePanelId, setResizePanelId] = useState<string | null>(null);
+    const [resizeDir, setResizeDir] = useState<ResizeDir | null>(null);
+
+    const [tempPanel, setTempPanel] = useState<Panel | null>(null);
+    const [originalPanel, setOriginalPanel] = useState<Panel | null>(null);
+
+    // -----------------------------
+    // Collision check
+    // -----------------------------
+    const collides = (panel: Panel) => {
         for (const other of panels) {
         if (other.id === panel.id) continue;
 
         const overlapX =
-            col < other.col + other.widthSlots &&
-            col + panel.widthSlots > other.col;
+            panel.col < other.col + other.widthSlots &&
+            panel.col + panel.widthSlots > other.col;
 
         const overlapY =
-            row < other.row + other.heightSlots &&
-            row + panel.heightSlots > other.row;
+            panel.row < other.row + other.heightSlots &&
+            panel.row + panel.heightSlots > other.row;
 
-        if (overlapX && overlapY) return false;
+        if (overlapX && overlapY) return true;
         }
-        return true;
+        return false;
     };
 
-    // -----------------------------------------------------------
-    // POINTER DOWN
-    // -----------------------------------------------------------
+    // -----------------------------
+    // DRAG START
+    // -----------------------------
     const handlePointerDown = (e: React.PointerEvent, panel: Panel) => {
         if (!panel.interactive) return;
+        if (resizePanelId) return; // don't drag while resizing
 
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
-        setDraggingPanelId(panel.id);
+        setDraggingId(panel.id);
         setDragPos({ row: panel.row, col: panel.col });
     };
 
-    // -----------------------------------------------------------
-    // POINTER MOVE (DRAGGING)
-    // -----------------------------------------------------------
+    // -----------------------------
+    // RESIZE START
+    // -----------------------------
+    const startResize = (
+        e: React.PointerEvent,
+        panel: Panel,
+        dir: ResizeDir
+    ) => {
+        if (!panel.interactive) return;
+
+        e.stopPropagation();
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+        setResizePanelId(panel.id);
+        setResizeDir(dir);
+        setTempPanel({ ...panel });
+        setOriginalPanel({ ...panel });
+    };
+
+    // -----------------------------
+    // POINTER MOVE
+    // -----------------------------
     const handlePointerMove = (e: React.PointerEvent) => {
-        if (!draggingPanelId) return;
+        const container = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = (e.clientX - container.left) / container.width;
+        const y = (e.clientY - container.top) / container.height;
 
-        const panel = panels.find((p) => p.id === draggingPanelId);
-        if (!panel) return;
-
-        const contentRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-
-        const x = (e.clientX - contentRect.left) / contentRect.width;
-        const y = (e.clientY - contentRect.top) / contentRect.height;
+        // ----------------------------------------
+        // DRAGGING
+        // ----------------------------------------
+        if (draggingId) {
+        const panel = panels.find((p) => p.id === draggingId)!;
 
         const col = Math.max(
-        0,
-        Math.min(Math.floor(x * numCols), numCols - panel.widthSlots)
+            0,
+            Math.min(Math.floor(x * numCols), numCols - panel.widthSlots)
         );
 
         const row = Math.max(
-        0,
-        Math.min(Math.floor(y * numRows), numRows - panel.heightSlots)
+            0,
+            Math.min(Math.floor(y * numRows), numRows - panel.heightSlots)
         );
 
         setDragPos({ row, col });
+        return;
+        }
+
+        // ----------------------------------------
+        // RESIZING — live free movement allowed
+        // ----------------------------------------
+        if (resizePanelId && resizeDir && tempPanel) {
+        const newPanel = { ...tempPanel };
+
+        const relCol = Math.floor(x * numCols);
+        const relRow = Math.floor(y * numRows);
+
+        // right edge
+        if (resizeDir.includes("right")) {
+            newPanel.widthSlots = Math.max(1, relCol - newPanel.col + 1);
+        }
+
+        // bottom edge
+        if (resizeDir.includes("bottom")) {
+            newPanel.heightSlots = Math.max(1, relRow - newPanel.row + 1);
+        }
+
+        // left edge
+        if (resizeDir.includes("left")) {
+            const diff = newPanel.col - relCol;
+            const newWidth = newPanel.widthSlots + diff;
+            if (newWidth > 0 && relCol >= 0) {
+            newPanel.col = relCol;
+            newPanel.widthSlots = newWidth;
+            }
+        }
+
+        // top edge
+        if (resizeDir.includes("top")) {
+            const diff = newPanel.row - relRow;
+            const newHeight = newPanel.heightSlots + diff;
+            if (newHeight > 0 && relRow >= 0) {
+            newPanel.row = relRow;
+            newPanel.heightSlots = newHeight;
+            }
+        }
+
+        // no collision check during resizing
+        setTempPanel(newPanel);
+        }
     };
 
-    // -----------------------------------------------------------
+    // -----------------------------
     // POINTER UP
-    // -----------------------------------------------------------
+    // -----------------------------
     const handlePointerUp = () => {
-        if (draggingPanelId && dragPos) {
-        const panel = panels.find((p) => p.id === draggingPanelId);
+        // drag end
+        if (draggingId && dragPos) {
+        const p = panels.find((p) => p.id === draggingId)!;
+        const updated = { ...p, ...dragPos };
 
-        if (panel && isSlotFree(panel, dragPos.row, dragPos.col)) {
+        if (!collides(updated)) {
             setPanels((prev) =>
-            prev.map((p) =>
-                p.id === panel.id ? { ...p, row: dragPos.row, col: dragPos.col } : p
-            )
+            prev.map((x) => (x.id === p.id ? updated : x))
             );
         }
         }
 
-        setDraggingPanelId(null);
+        // resize end (collision → revert)
+        if (resizePanelId && tempPanel && originalPanel) {
+        if (collides(tempPanel)) {
+            // revert
+            setPanels((prev) =>
+            prev.map((p) =>
+                p.id === originalPanel.id ? originalPanel : p
+            )
+            );
+        } else {
+            // commit
+            setPanels((prev) =>
+            prev.map((p) => (p.id === tempPanel.id ? tempPanel : p))
+            );
+        }
+        }
+
+        // reset states
+        setDraggingId(null);
         setDragPos(null);
+        setResizePanelId(null);
+        setResizeDir(null);
+        setTempPanel(null);
+        setOriginalPanel(null);
     };
 
-    // -----------------------------------------------------------
-    // TOGGLE INTERACTIVE
-    // -----------------------------------------------------------
+    // -----------------------------
+    // LOCK TOGGLE
+    // -----------------------------
     const toggleInteractive = (id: string) => {
         setPanels((prev) =>
         prev.map((p) =>
@@ -168,9 +257,9 @@ const App: React.FC = () => {
         );
     };
 
-    // -----------------------------------------------------------
+    // -----------------------------
     // RENDER
-    // -----------------------------------------------------------
+    // -----------------------------
     return (
         <div
         id="panelgrid"
@@ -179,35 +268,78 @@ const App: React.FC = () => {
         onPointerCancel={handlePointerUp}
         >
         {panels.map((panel) => {
-            const pos =
-            draggingPanelId === panel.id && dragPos
-                ? dragPos
-                : { row: panel.row, col: panel.col };
+            const display =
+            resizePanelId === panel.id && tempPanel
+                ? tempPanel
+                : draggingId === panel.id && dragPos
+                ? { ...panel, ...dragPos }
+                : panel;
 
             return (
             <div
-                className="panel pane"
                 key={panel.id}
+                className="panel pane"
                 style={{
-                top: `calc(${pos.row * slotHeight}% + ${borderMarginVH}vh)`,
-                left: `calc(${pos.col * slotWidth}% + ${borderMarginVH}vh)`,
-                width: `calc(${panel.widthSlots * slotWidth}% - ${panelGapVH}vh)`,
-                height: `calc(${panel.heightSlots * slotHeight}% - ${panelGapVH}vh)`,
+                top: `calc(${display.row * slotHeight}% + ${borderMarginVH}vh)`,
+                left: `calc(${display.col * slotWidth}% + ${borderMarginVH}vh)`,
+                width: `calc(${display.widthSlots * slotWidth}% - ${panelGapVH}vh)`,
+                height: `calc(${display.heightSlots * slotHeight}% - ${panelGapVH}vh)`,
                 }}
                 onPointerDown={(e) => handlePointerDown(e, panel)}
             >
-                <div className="content">
-                    <Load />
-                </div>
+                <Load />
+
+                {/* LOCK BUTTON */}
                 <div
                 className="lock pane"
-                onClick={(event) => {
-                    event.stopPropagation();
+                onClick={(ev) => {
+                    ev.stopPropagation();
                     toggleInteractive(panel.id);
                 }}
                 >
                 {panel.interactive ? "🔓" : "🔒"}
                 </div>
+
+                {/* RESIZE HANDLES */}
+                {panel.interactive && (
+                <>
+                    {/* edges */}
+                    <div
+                    className="resize-handle handle-top"
+                    onPointerDown={(e) => startResize(e, panel, "top")}
+                    />
+                    <div
+                    className="resize-handle handle-bottom"
+                    onPointerDown={(e) => startResize(e, panel, "bottom")}
+                    />
+                    <div
+                    className="resize-handle handle-left"
+                    onPointerDown={(e) => startResize(e, panel, "left")}
+                    />
+                    <div
+                    className="resize-handle handle-right"
+                    onPointerDown={(e) => startResize(e, panel, "right")}
+                    />
+
+                    {/* corners */}
+                    <div
+                    className="resize-handle handle-tl"
+                    onPointerDown={(e) => startResize(e, panel, "top-left")}
+                    />
+                    <div
+                    className="resize-handle handle-tr"
+                    onPointerDown={(e) => startResize(e, panel, "top-right")}
+                    />
+                    <div
+                    className="resize-handle handle-bl"
+                    onPointerDown={(e) => startResize(e, panel, "bottom-left")}
+                    />
+                    <div
+                    className="resize-handle handle-br"
+                    onPointerDown={(e) => startResize(e, panel, "bottom-right")}
+                    />
+                </>
+                )}
             </div>
             );
         })}
