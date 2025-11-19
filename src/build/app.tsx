@@ -3,23 +3,23 @@ import "../styles/app.css";
 import Load from "./load";
 
 interface Panel {
-id: string;
-row: number;
-col: number;
-widthSlots: number;
-heightSlots: number;
-interactive: boolean;
+    id: string;
+    row: number;
+    col: number;
+    widthSlots: number;
+    heightSlots: number;
+    interactive: boolean;
 }
 
 type ResizeDir =
-| "left"
-| "right"
-| "top"
-| "bottom"
-| "top-left"
-| "top-right"
-| "bottom-left"
-| "bottom-right";
+    | "left"
+    | "right"
+    | "top"
+    | "bottom"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
 
 const App: React.FC = () => {
     // -----------------------------
@@ -161,7 +161,7 @@ const App: React.FC = () => {
         }
 
         // ----------------------------------------
-        // RESIZING — live free movement allowed
+        // RESIZING — live free movement allowed but constrained within grid
         // ----------------------------------------
         if (resizePanelId && resizeDir && tempPanel) {
         const newPanel = { ...tempPanel };
@@ -169,37 +169,52 @@ const App: React.FC = () => {
         const relCol = Math.floor(x * numCols);
         const relRow = Math.floor(y * numRows);
 
-        // right edge
+        // RIGHT edge
         if (resizeDir.includes("right")) {
-            newPanel.widthSlots = Math.max(1, relCol - newPanel.col + 1);
+            newPanel.widthSlots = Math.max(
+            1,
+            Math.min(relCol - newPanel.col + 1, numCols - newPanel.col)
+            );
         }
 
-        // bottom edge
+        // BOTTOM edge
         if (resizeDir.includes("bottom")) {
-            newPanel.heightSlots = Math.max(1, relRow - newPanel.row + 1);
+            newPanel.heightSlots = Math.max(
+            1,
+            Math.min(relRow - newPanel.row + 1, numRows - newPanel.row)
+            );
         }
 
-        // left edge
+        // LEFT edge
         if (resizeDir.includes("left")) {
             const diff = newPanel.col - relCol;
-            const newWidth = newPanel.widthSlots + diff;
-            if (newWidth > 0 && relCol >= 0) {
-            newPanel.col = relCol;
-            newPanel.widthSlots = newWidth;
+            let newWidth = newPanel.widthSlots + diff;
+            let newCol = relCol;
+
+            if (newCol < 0) {
+            newWidth += newCol;
+            newCol = 0;
             }
+            if (newWidth < 1) newWidth = 1;
+            newPanel.col = newCol;
+            newPanel.widthSlots = Math.min(newWidth, numCols - newCol);
         }
 
-        // top edge
+        // TOP edge
         if (resizeDir.includes("top")) {
             const diff = newPanel.row - relRow;
-            const newHeight = newPanel.heightSlots + diff;
-            if (newHeight > 0 && relRow >= 0) {
-            newPanel.row = relRow;
-            newPanel.heightSlots = newHeight;
+            let newHeight = newPanel.heightSlots + diff;
+            let newRow = relRow;
+
+            if (newRow < 0) {
+            newHeight += newRow;
+            newRow = 0;
             }
+            if (newHeight < 1) newHeight = 1;
+            newPanel.row = newRow;
+            newPanel.heightSlots = Math.min(newHeight, numRows - newRow);
         }
 
-        // no collision check during resizing
         setTempPanel(newPanel);
         }
     };
@@ -208,7 +223,9 @@ const App: React.FC = () => {
     // POINTER UP
     // -----------------------------
     const handlePointerUp = () => {
-        // drag end
+        // ---------------------
+        // Drag end
+        // ---------------------
         if (draggingId && dragPos) {
         const p = panels.find((p) => p.id === draggingId)!;
         const updated = { ...p, ...dragPos };
@@ -220,7 +237,9 @@ const App: React.FC = () => {
         }
         }
 
-        // resize end (collision → revert)
+        // ---------------------
+        // Resize end (collision → revert)
+        // ---------------------
         if (resizePanelId && tempPanel && originalPanel) {
         if (collides(tempPanel)) {
             // revert
@@ -230,14 +249,14 @@ const App: React.FC = () => {
             )
             );
         } else {
-            // commit
+            // accept
             setPanels((prev) =>
             prev.map((p) => (p.id === tempPanel.id ? tempPanel : p))
             );
         }
         }
 
-        // reset states
+        // cleanup
         setDraggingId(null);
         setDragPos(null);
         setResizePanelId(null);
