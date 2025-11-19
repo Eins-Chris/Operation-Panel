@@ -70,6 +70,8 @@ const App: React.FC = () => {
     const [draggingId, setDraggingId] = useState<string | null>(null);
     const [dragPos, setDragPos] =
         useState<{ row: number; col: number } | null>(null);
+    const [dragOffset, setDragOffset] =
+        useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
     // -----------------------------
     // RESIZING
@@ -109,6 +111,14 @@ const App: React.FC = () => {
 
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
+        const container = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const pointerX = e.clientX - container.left;
+        const pointerY = e.clientY - container.top;
+
+        const panelLeft = panel.col * container.width / numCols;
+        const panelTop = panel.row * container.height / numRows;
+
+        setDragOffset({ x: pointerX - panelLeft, y: pointerY - panelTop });
         setDraggingId(panel.id);
         setDragPos({ row: panel.row, col: panel.col });
     };
@@ -146,14 +156,23 @@ const App: React.FC = () => {
         if (draggingId) {
         const panel = panels.find((p) => p.id === draggingId)!;
 
+        const pointerX = e.clientX - container.left;
+        const pointerY = e.clientY - container.top;
+
         const col = Math.max(
             0,
-            Math.min(Math.floor(x * numCols), numCols - panel.widthSlots)
+            Math.min(
+            Math.floor((pointerX - dragOffset.x) / container.width * numCols),
+            numCols - panel.widthSlots
+            )
         );
 
         const row = Math.max(
             0,
-            Math.min(Math.floor(y * numRows), numRows - panel.heightSlots)
+            Math.min(
+            Math.floor((pointerY - dragOffset.y) / container.height * numRows),
+            numRows - panel.heightSlots
+            )
         );
 
         setDragPos({ row, col });
@@ -161,15 +180,14 @@ const App: React.FC = () => {
         }
 
         // ----------------------------------------
-        // RESIZING — live free movement allowed but constrained within grid
+        // RESIZING
         // ----------------------------------------
         if (resizePanelId && resizeDir && tempPanel) {
         const newPanel = { ...tempPanel };
-
         const relCol = Math.floor(x * numCols);
         const relRow = Math.floor(y * numRows);
 
-        // RIGHT edge
+        // RIGHT
         if (resizeDir.includes("right")) {
             newPanel.widthSlots = Math.max(
             1,
@@ -177,7 +195,7 @@ const App: React.FC = () => {
             );
         }
 
-        // BOTTOM edge
+        // BOTTOM
         if (resizeDir.includes("bottom")) {
             newPanel.heightSlots = Math.max(
             1,
@@ -185,7 +203,7 @@ const App: React.FC = () => {
             );
         }
 
-        // LEFT edge
+        // LEFT
         if (resizeDir.includes("left")) {
             const diff = newPanel.col - relCol;
             let newWidth = newPanel.widthSlots + diff;
@@ -200,7 +218,7 @@ const App: React.FC = () => {
             newPanel.widthSlots = Math.min(newWidth, numCols - newCol);
         }
 
-        // TOP edge
+        // TOP
         if (resizeDir.includes("top")) {
             const diff = newPanel.row - relRow;
             let newHeight = newPanel.heightSlots + diff;
@@ -223,9 +241,7 @@ const App: React.FC = () => {
     // POINTER UP
     // -----------------------------
     const handlePointerUp = () => {
-        // ---------------------
         // Drag end
-        // ---------------------
         if (draggingId && dragPos) {
         const p = panels.find((p) => p.id === draggingId)!;
         const updated = { ...p, ...dragPos };
@@ -237,19 +253,15 @@ const App: React.FC = () => {
         }
         }
 
-        // ---------------------
         // Resize end (collision → revert)
-        // ---------------------
         if (resizePanelId && tempPanel && originalPanel) {
         if (collides(tempPanel)) {
-            // revert
             setPanels((prev) =>
             prev.map((p) =>
                 p.id === originalPanel.id ? originalPanel : p
             )
             );
         } else {
-            // accept
             setPanels((prev) =>
             prev.map((p) => (p.id === tempPanel.id ? tempPanel : p))
             );
@@ -259,6 +271,7 @@ const App: React.FC = () => {
         // cleanup
         setDraggingId(null);
         setDragPos(null);
+        setDragOffset({ x: 0, y: 0 });
         setResizePanelId(null);
         setResizeDir(null);
         setTempPanel(null);
