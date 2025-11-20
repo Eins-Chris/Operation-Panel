@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../styles/app.css";
-import Load from "./load";
+/* import { Load } from "./load"; */
 
 interface Panel {
     id: string;
@@ -42,7 +42,7 @@ const App: React.FC = () => {
         id: "panel1",
         row: 0,
         col: 0,
-        widthSlots: 2,
+        widthSlots: 4,
         heightSlots: 2,
         interactive: true,
         },
@@ -319,7 +319,10 @@ const App: React.FC = () => {
                 }}
                 onPointerDown={(e) => handlePointerDown(e, panel)}
             >
-                <Load />
+                <div id="content">
+                    {/* <Load panelId={panel.id} /> */}
+                    <iframe src="https://www.synatech.de/Digital_ZA/PDF/ZA_Blick.pdf"></iframe>
+                </div>
 
                 {/* LOCK BUTTON */}
                 <div

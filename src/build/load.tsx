@@ -1,6 +1,11 @@
+import React from 'react';
 import "../styles/load.css";
 
-function Load() {
+interface LoadProps {
+  panelId: string;
+}
+
+export const Load: React.FC<LoadProps> = ({ panelId }) => {
     return (
         <div className="load">
             <div className="wrapper">
@@ -13,8 +18,9 @@ function Load() {
                     <div className="box six"></div>
                 </div>
             </div>
+            <div className="panel-id">{ panelId }</div>
+            <div className="word">[Loading]</div>
+            <div className="overlay"></div>
         </div>
     );
 }
-
-export default Load;
