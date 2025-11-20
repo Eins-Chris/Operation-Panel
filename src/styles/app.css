@@ -39,23 +39,23 @@
 .panel .handle-right {
     top: 0;
     height: 100%;
-    width: 1vh;
+    width: 2vh;
 }
 
-.panel .handle-top { top: -0.5vh; cursor: ns-resize; }
-.panel .handle-bottom { bottom: -0.5vh; cursor: ns-resize; }
-.panel .handle-left { left: -0.5vh; cursor: ew-resize; }
-.panel .handle-right { right: -0.5vh; cursor: ew-resize; }
+.panel .handle-top { top: -1vh; cursor: ns-resize; }
+.panel .handle-bottom { bottom: -1vh; cursor: ns-resize; }
+.panel .handle-left { left: -1vh; cursor: ew-resize; }
+.panel .handle-right { right: -1vh; cursor: ew-resize; }
 
 .panel .handle-tl,
 .panel .handle-tr,
 .panel .handle-bl,
-.panel .handle-br { width: 1.5vh; height: 1.5vh; }
+.panel .handle-br { width: 3vh; height: 3vh; }
 
-.panel .handle-tl { top: -0.75vh; left: -0.75vh; cursor: nwse-resize; }
-.panel .handle-tr { top: -0.75vh; right: -0.75vh; cursor: nesw-resize; }
-.panel .handle-bl { bottom: -0.75vh; left: -0.75vh; cursor: nesw-resize; }
-.panel .handle-br { bottom: -0.75vh; right: -0.75vh; cursor: nwse-resize; }
+.panel .handle-tl { top: -1.5vh; left: -1.5vh; cursor: nwse-resize; }
+.panel .handle-tr { top: -1.5vh; right: -1.5vh; cursor: nesw-resize; }
+.panel .handle-bl { bottom: -1.5vh; left: -1.5vh; cursor: nesw-resize; }
+.panel .handle-br { bottom: -1.5vh; right: -1.5vh; cursor: nwse-resize; }
 
 #content {
     width: 100%;
