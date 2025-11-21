@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../styles/app.css";
-/* import { Load } from "./load"; */
+import { Load } from "./load";
 
 interface Panel {
     id: string;
@@ -38,7 +38,7 @@ const App: React.FC = () => {
     // PANELS
     // -----------------------------
     const [panels, setPanels] = useState<Panel[]>([
-        {
+        /* {
         id: "panel1",
         row: 0,
         col: 0,
@@ -53,7 +53,7 @@ const App: React.FC = () => {
         widthSlots: 2,
         heightSlots: 2,
         interactive: false,
-        },
+        }, 
         {
         id: "panel5",
         row: 0,
@@ -61,6 +61,14 @@ const App: React.FC = () => {
         widthSlots: 4,
         heightSlots: 4,
         interactive: false,
+        }, */
+        {
+        id: "panel1",
+        row: 1,
+        col: 1,
+        widthSlots: 4,
+        heightSlots: 2,
+        interactive: true,
         },
     ]);
 
@@ -320,8 +328,7 @@ const App: React.FC = () => {
                 onPointerDown={(e) => handlePointerDown(e, panel)}
             >
                 <div id="content">
-                    {/* <Load panelId={panel.id} /> */}
-                    <iframe src="https://www.synatech.de/Digital_ZA/PDF/ZA_Blick.pdf"></iframe>
+                    {<Load panelId={panel.id} />}
                 </div>
 
                 {/* LOCK BUTTON */}

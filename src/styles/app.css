@@ -32,39 +32,40 @@
 .panel .handle-bottom {
     left: 0;
     width: 100%;
-    height: 1vh;
+    height: 3vh;
 }
 
 .panel .handle-left,
 .panel .handle-right {
     top: 0;
     height: 100%;
-    width: 2vh;
+    width: 3vh;
 }
 
-.panel .handle-top { top: -1vh; cursor: ns-resize; }
-.panel .handle-bottom { bottom: -1vh; cursor: ns-resize; }
-.panel .handle-left { left: -1vh; cursor: ew-resize; }
-.panel .handle-right { right: -1vh; cursor: ew-resize; }
+.panel .handle-top { top: -1.5vh; cursor: ns-resize; }
+.panel .handle-bottom { bottom: -1.5vh; cursor: ns-resize; }
+.panel .handle-left { left: -1.5vh; cursor: ew-resize; }
+.panel .handle-right { right: -1.5vh; cursor: ew-resize; }
 
 .panel .handle-tl,
 .panel .handle-tr,
 .panel .handle-bl,
-.panel .handle-br { width: 3vh; height: 3vh; }
+.panel .handle-br { width: 4vh; height: 4vh; }
 
-.panel .handle-tl { top: -1.5vh; left: -1.5vh; cursor: nwse-resize; }
-.panel .handle-tr { top: -1.5vh; right: -1.5vh; cursor: nesw-resize; }
-.panel .handle-bl { bottom: -1.5vh; left: -1.5vh; cursor: nesw-resize; }
-.panel .handle-br { bottom: -1.5vh; right: -1.5vh; cursor: nwse-resize; }
+.panel .handle-tl { top: -2vh; left: -2vh; cursor: nwse-resize; }
+.panel .handle-tr { top: -2vh; right: -2vh; cursor: nesw-resize; }
+.panel .handle-bl { bottom: -2vh; left: -2vh; cursor: nesw-resize; }
+.panel .handle-br { bottom: -2vh; right: -2vh; cursor: nwse-resize; }
 
 #content {
     width: 100%;
     height: 100%;
-    background-color: rgba(226, 242, 255, 0.8);
+    margin: 1vh;
 }
 
 #content iframe {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     border: 0;
+    margin: 1vh;
 }
