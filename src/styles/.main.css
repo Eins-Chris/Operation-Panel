@@ -4,7 +4,7 @@ body {
     margin: 0;
 }
 
-body.active {
+body.possiblevariation {
     background: radial-gradient(#222922, #000500);
 }
 

@@ -65,10 +65,10 @@ const App: React.FC = () => {
         {
         id: "panel1",
         row: 1,
-        col: 1,
+        col: 2,
         widthSlots: 4,
         heightSlots: 2,
-        interactive: true,
+        interactive: false,
         },
     ]);
 
@@ -307,16 +307,16 @@ const App: React.FC = () => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         >
-        {panels.map((panel) => {
-            const display =
-            resizePanelId === panel.id && tempPanel
-                ? tempPanel
-                : draggingId === panel.id && dragPos
-                ? { ...panel, ...dragPos }
-                : panel;
+            {panels.map((panel) => {
+                const display =
+                resizePanelId === panel.id && tempPanel
+                    ? tempPanel
+                    : draggingId === panel.id && dragPos
+                    ? { ...panel, ...dragPos }
+                    : panel;
 
             return (
-            <div
+                <div
                 key={panel.id}
                 className="panel pane"
                 style={{
@@ -326,63 +326,63 @@ const App: React.FC = () => {
                 height: `calc(${display.heightSlots * slotHeight}% - ${panelGapVH}vh)`,
                 }}
                 onPointerDown={(e) => handlePointerDown(e, panel)}
-            >
-                <div id="content">
-                    {<Load panelId={panel.id} />}
-                </div>
-
-                {/* LOCK BUTTON */}
-                <div
-                className="lock pane"
-                onClick={(ev) => {
-                    ev.stopPropagation();
-                    toggleInteractive(panel.id);
-                }}
                 >
-                {panel.interactive ? "🔓" : "🔒"}
+                    <div id="content" className={panel.interactive ? 'interactive' : 'fix'}>
+                        {<Load panelId={panel.id} />}
+                    </div>
+
+                    {/* LOCK BUTTON */}
+                    <div
+                    className="lock pane"
+                    onClick={(ev) => {
+                        ev.stopPropagation();
+                        toggleInteractive(panel.id);
+                    }}
+                    >
+                        {panel.interactive ? "🔓" : "🔒"}
+                    </div>
+
+                    {/* RESIZE HANDLES */}
+                    {panel.interactive && (
+                    <>
+                        {/* edges */}
+                        <div
+                        className="resize-handle handle-top"
+                        onPointerDown={(e) => startResize(e, panel, "top")}
+                        />
+                        <div
+                        className="resize-handle handle-bottom"
+                        onPointerDown={(e) => startResize(e, panel, "bottom")}
+                        />
+                        <div
+                        className="resize-handle handle-left"
+                        onPointerDown={(e) => startResize(e, panel, "left")}
+                        />
+                        <div
+                        className="resize-handle handle-right"
+                        onPointerDown={(e) => startResize(e, panel, "right")}
+                        />
+
+                        {/* corners */}
+                        <div
+                        className="resize-handle handle-tl"
+                        onPointerDown={(e) => startResize(e, panel, "top-left")}
+                        />
+                        <div
+                        className="resize-handle handle-tr"
+                        onPointerDown={(e) => startResize(e, panel, "top-right")}
+                        />
+                        <div
+                        className="resize-handle handle-bl"
+                        onPointerDown={(e) => startResize(e, panel, "bottom-left")}
+                        />
+                        <div
+                        className="resize-handle handle-br"
+                        onPointerDown={(e) => startResize(e, panel, "bottom-right")}
+                        />
+                    </>
+                    )}
                 </div>
-
-                {/* RESIZE HANDLES */}
-                {panel.interactive && (
-                <>
-                    {/* edges */}
-                    <div
-                    className="resize-handle handle-top"
-                    onPointerDown={(e) => startResize(e, panel, "top")}
-                    />
-                    <div
-                    className="resize-handle handle-bottom"
-                    onPointerDown={(e) => startResize(e, panel, "bottom")}
-                    />
-                    <div
-                    className="resize-handle handle-left"
-                    onPointerDown={(e) => startResize(e, panel, "left")}
-                    />
-                    <div
-                    className="resize-handle handle-right"
-                    onPointerDown={(e) => startResize(e, panel, "right")}
-                    />
-
-                    {/* corners */}
-                    <div
-                    className="resize-handle handle-tl"
-                    onPointerDown={(e) => startResize(e, panel, "top-left")}
-                    />
-                    <div
-                    className="resize-handle handle-tr"
-                    onPointerDown={(e) => startResize(e, panel, "top-right")}
-                    />
-                    <div
-                    className="resize-handle handle-bl"
-                    onPointerDown={(e) => startResize(e, panel, "bottom-left")}
-                    />
-                    <div
-                    className="resize-handle handle-br"
-                    onPointerDown={(e) => startResize(e, panel, "bottom-right")}
-                    />
-                </>
-                )}
-            </div>
             );
         })}
         </div>
@@ -390,3 +390,11 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+/* 
+    Still ToDo:
+    
+    Maybe overlapping panels
+    Maybe Panels array/list?
+    Automated creation of Panels with data from API
+*/
