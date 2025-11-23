@@ -4,11 +4,12 @@ import { Load } from "./load";
 
 interface Panel {
     id: string;
-    row: number;
     col: number;
-    widthSlots: number;
-    heightSlots: number;
+    row: number;
+    colSize: number;
+    rowSize: number;
     interactive: boolean;
+    url: string;
 }
 
 type ResizeDir =
@@ -38,37 +39,14 @@ const App: React.FC = () => {
     // PANELS
     // -----------------------------
     const [panels, setPanels] = useState<Panel[]>([
-        /* {
-        id: "panel1",
-        row: 0,
-        col: 0,
-        widthSlots: 4,
-        heightSlots: 2,
-        interactive: true,
-        },
         {
-        id: "panel2",
-        row: 2,
-        col: 0,
-        widthSlots: 2,
-        heightSlots: 2,
-        interactive: false,
-        }, 
-        {
-        id: "panel5",
-        row: 0,
-        col: 4,
-        widthSlots: 4,
-        heightSlots: 4,
-        interactive: false,
-        }, */
-        {
-        id: "panel1",
-        row: 1,
+        id: "data-panel-id",
         col: 2,
-        widthSlots: 4,
-        heightSlots: 2,
+        row: 1,
+        colSize: 4,
+        rowSize: 2,
         interactive: false,
+        url: "https://www.synatech.de/Digital_ZA/PDF/ZA_Blick.pdf",
         },
     ]);
 
@@ -98,12 +76,12 @@ const App: React.FC = () => {
         if (other.id === panel.id) continue;
 
         const overlapX =
-            panel.col < other.col + other.widthSlots &&
-            panel.col + panel.widthSlots > other.col;
+            panel.col < other.col + other.colSize &&
+            panel.col + panel.colSize > other.col;
 
         const overlapY =
-            panel.row < other.row + other.heightSlots &&
-            panel.row + panel.heightSlots > other.row;
+            panel.row < other.row + other.rowSize &&
+            panel.row + panel.rowSize > other.row;
 
         if (overlapX && overlapY) return true;
         }
@@ -171,7 +149,7 @@ const App: React.FC = () => {
             0,
             Math.min(
             Math.floor((pointerX - dragOffset.x) / container.width * numCols),
-            numCols - panel.widthSlots
+            numCols - panel.colSize
             )
         );
 
@@ -179,7 +157,7 @@ const App: React.FC = () => {
             0,
             Math.min(
             Math.floor((pointerY - dragOffset.y) / container.height * numRows),
-            numRows - panel.heightSlots
+            numRows - panel.rowSize
             )
         );
 
@@ -197,7 +175,7 @@ const App: React.FC = () => {
 
         // RIGHT
         if (resizeDir.includes("right")) {
-            newPanel.widthSlots = Math.max(
+            newPanel.colSize = Math.max(
             1,
             Math.min(relCol - newPanel.col + 1, numCols - newPanel.col)
             );
@@ -205,7 +183,7 @@ const App: React.FC = () => {
 
         // BOTTOM
         if (resizeDir.includes("bottom")) {
-            newPanel.heightSlots = Math.max(
+            newPanel.rowSize = Math.max(
             1,
             Math.min(relRow - newPanel.row + 1, numRows - newPanel.row)
             );
@@ -214,7 +192,7 @@ const App: React.FC = () => {
         // LEFT
         if (resizeDir.includes("left")) {
             const diff = newPanel.col - relCol;
-            let newWidth = newPanel.widthSlots + diff;
+            let newWidth = newPanel.colSize + diff;
             let newCol = relCol;
 
             if (newCol < 0) {
@@ -223,13 +201,13 @@ const App: React.FC = () => {
             }
             if (newWidth < 1) newWidth = 1;
             newPanel.col = newCol;
-            newPanel.widthSlots = Math.min(newWidth, numCols - newCol);
+            newPanel.colSize = Math.min(newWidth, numCols - newCol);
         }
 
         // TOP
         if (resizeDir.includes("top")) {
             const diff = newPanel.row - relRow;
-            let newHeight = newPanel.heightSlots + diff;
+            let newHeight = newPanel.rowSize + diff;
             let newRow = relRow;
 
             if (newRow < 0) {
@@ -238,7 +216,7 @@ const App: React.FC = () => {
             }
             if (newHeight < 1) newHeight = 1;
             newPanel.row = newRow;
-            newPanel.heightSlots = Math.min(newHeight, numRows - newRow);
+            newPanel.rowSize = Math.min(newHeight, numRows - newRow);
         }
 
         setTempPanel(newPanel);
@@ -315,6 +293,7 @@ const App: React.FC = () => {
                     ? { ...panel, ...dragPos }
                     : panel;
 
+            const [loaded, setLoaded] = useState(false);
             return (
                 <div
                 key={panel.id}
@@ -322,13 +301,25 @@ const App: React.FC = () => {
                 style={{
                 top: `calc(${display.row * slotHeight}% + ${borderMarginVH}vh)`,
                 left: `calc(${display.col * slotWidth}% + ${borderMarginVH}vh)`,
-                width: `calc(${display.widthSlots * slotWidth}% - ${panelGapVH}vh)`,
-                height: `calc(${display.heightSlots * slotHeight}% - ${panelGapVH}vh)`,
+                width: `calc(${display.colSize * slotWidth}% - ${panelGapVH}vh)`,
+                height: `calc(${display.rowSize * slotHeight}% - ${panelGapVH}vh)`,
                 }}
                 onPointerDown={(e) => handlePointerDown(e, panel)}
                 >
-                    <div id="content" className={panel.interactive ? 'interactive' : 'fix'}>
-                        {<Load panelId={panel.id} />}
+                    <div id="content-wrapper" className={panel.interactive ? 'interactive' : 'fix'}>
+                        <div className="content">
+                            { !loaded && <Load panelId={panel.id} /> }
+                            <iframe
+                                src={panel.url}
+                                style={{
+                                    display: loaded ? "block" : "none",
+                                    width: "100%",
+                                    height: "100%",
+                                    border: "none",
+                                }}
+                                onLoad={() => setLoaded(true)}
+                            />
+                        </div>
                     </div>
 
                     {/* LOCK BUTTON */}
