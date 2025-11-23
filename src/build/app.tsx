@@ -46,7 +46,7 @@ const App: React.FC = () => {
         colSize: 4,
         rowSize: 2,
         interactive: false,
-        url: "https://www.synatech.de/Digital_ZA/PDF/ZA_Blick.pdf",
+        url: "",
         },
     ]);
 
