@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/nav.css";
+import type { Sites } from "./.main.tsx";
 
-const BottomNavbar: React.FC = () => {
+type NavProps = {
+  site: string;
+  setSite: React.Dispatch<React.SetStateAction<Sites>>;
+};
+
+const Nav = ({ site, setSite }: NavProps) => {
     const [open, setOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
@@ -36,13 +42,13 @@ const BottomNavbar: React.FC = () => {
 
     return (
         <nav className="navbar pane">
-            <div className={`dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
+            <div className={`container dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
                 <button 
                 className={`square-btn ${open ? "open" : ""} pane`}
                 aria-haspopup="true"
                 aria-expanded={open}
                 aria-controls="dropdownMenu"
-                title="Settings"
+                title="Menu"
                 onClick={(e) => {
                     e.stopPropagation();
                     toggleMenu();
@@ -52,29 +58,38 @@ const BottomNavbar: React.FC = () => {
                     <span className="bar bar1"></span>
                     <span className="bar bar2"></span>
                     <span className="bar bar3"></span>
-                    <span className="sr-only">Menü öffnen</span>
                 </button>
 
                 <ul
                 id="dropdownMenu"
-                className="dropdown-menu"
+                className="dropdown-menu pane"
                 role="menu"
                 aria-hidden={!open}
                 ref={menuRef}
                 >
-                    <li role="menuitem" tabIndex={-1}>
-                        <button>Aktion 1</button>
+                    <li role="menutext" tabIndex={-1} className="menutext">Devices</li>
+                    <li role="menuitem" tabIndex={-1} className="pane">
+                        <button>Device-01</button>
                     </li>
-                    <li role="menuitem" tabIndex={-1}>
-                        <button>Aktion 2</button>
-                    </li>
-                    <li role="menuitem" tabIndex={-1}>
-                        <button>Einstellungen</button>
+                    <li role="menusplit" tabIndex={-1} className="menusplit"></li>
+                    <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
+                    <li role="menuitem" tabIndex={-1} className="pane">
+                        <button onClick={() => setSite('devices')}>Edit Devices</button>
                     </li>
                 </ul>
             </div>
+            <div className="container home-container" >
+                <button className="square-btn pane" onClick={() => setSite('home')}>
+                    <span className="bar roof-left"></span>
+                    <span className="bar roof-right"></span>
+                    <span className="bar wall-left"></span>
+                    <span className="bar wall-right"></span>
+                    <span className="bar bottom"></span>
+                </button>
+            </div>
+            <p>Current: [{site}]</p>
         </nav>
     )
 }
 
-export default BottomNavbar;
+export default Nav;

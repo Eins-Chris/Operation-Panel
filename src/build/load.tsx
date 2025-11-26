@@ -2,7 +2,7 @@ import React from 'react';
 import "../styles/load.css";
 
 interface LoadProps {
-  panelId: string;
+    panelId: string;
 }
 
 export const Load: React.FC<LoadProps> = ({ panelId }) => {

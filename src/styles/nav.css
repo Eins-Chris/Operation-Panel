@@ -14,7 +14,7 @@
     padding: 1vh;
 }
 
-.navbar .dropdown-container .square-btn {
+.navbar .container .square-btn {
     width: 3vh;
     height: 3vh;
     background: transparent;
@@ -30,13 +30,18 @@
     padding: 0;
 }
 
-.navbar .dropdown-container .square-btn .bar {
+.navbar .container .square-btn .bar {
     width: 60%;
     height: 0.22vh;
     background-color: white;
     margin: 0.17vh 0;
     border-radius: 0.22vh;
     transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar .home-container .square-btn .bar {
+    position: absolute;
 }
 
 .navbar .dropdown-container .square-btn.open .bar1 {
@@ -51,6 +56,37 @@
     transform: rotate(-45deg) translate(0.385vh, -0.385vh);
 }
 
+.navbar .home-container .square-btn .roof-left {
+    top: 0.6vh;
+    left: 0.3vh;
+    transform: rotate(-35deg);
+    width: 1.3vh;
+}
+
+.navbar .home-container .square-btn .roof-right {
+    top: 0.6vh;
+    right: 0.3vh;
+    transform: rotate(35deg);
+    width: 1.3vh;
+}
+
+.navbar .home-container .square-btn .wall-left {
+    transform: rotate(90deg) translate(0.2vh, 0.6vh);
+    width: 1.25vh;
+}
+
+.navbar .home-container .square-btn .wall-right {
+    transform: rotate(90deg) translate(0.2vh, -0.6vh);
+    width: 1.25vh;
+}
+
+
+
+.navbar .home-container .square-btn .bottom {
+    transform: translate(0, 0.7vh);
+    width: 1.3vh;
+}
+
 
 /* 
 Still under development
@@ -59,16 +95,12 @@ Not ready
 
 .dropdown-menu {
     position: absolute;
-    bottom: 50px;
+    bottom: 5.5vh;
     left: 0;
-    background: white;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     list-style: none;
-    margin: 0;
-    padding: 4px 0;
-    min-width: 160px;
+    padding: 0;
     display: none;
+    min-width: 14vh;
 }
 
 .dropdown-container.open .dropdown-menu {
@@ -79,29 +111,33 @@ Not ready
 .dropdown-menu li button {
     width: 100%;
     background: none;
-    border: none;
-    padding: 10px 14px;
+    padding: 1vh;
+    border: 0.1vh;
     text-align: left;
-    font-size: 14px;
-    color: #007bff;
+    font-size: 2vh;
     cursor: pointer;
+    border-radius: 1vh;
 }
 
 .dropdown-menu li button:hover,
 .dropdown-menu li button:focus {
-    background-color: #f2f2f2;
+    background-color: radial-gradient(#222922, #000500);
     outline: none;
 }
 
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
+.dropdown-menu .menusplit {
+    height: 1vh;
+}
+
+.dropdown-menu .menutext {
     padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+    margin: 1vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
+.navbar p {
+    margin-left: 1vh;
 }
 
 @keyframes slideUp {
