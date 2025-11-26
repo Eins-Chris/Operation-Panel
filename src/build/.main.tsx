@@ -5,22 +5,22 @@ import Background from './background.tsx'
 import Content from './content.tsx'
 import Nav from './nav.tsx'
 
-export type Sites = "home" | "devices";
+export type Sites = "home" | "setting-config-database" | "setting-devices" | "TEMPORARY";
 
 const Main = () => {
-  const [site, setSite] = useState<Sites>('home'); // <- State statt normale Variable
+    const [site, setSite] = useState<Sites>('home');
 
-  return (
-    <>
-      <Background />
-      <Content site={site} />
-      <Nav site={site} setSite={setSite} />
-    </>
-  );
+    return (
+        <>
+            <Background />
+            <Content site={site} />
+            <Nav site={site} setSite={setSite} />
+        </>
+    );
 };
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Main />
-  </StrictMode>
+    <StrictMode>
+        <Main />
+    </StrictMode>
 );

@@ -69,12 +69,15 @@ const Nav = ({ site, setSite }: NavProps) => {
                 >
                     <li role="menutext" tabIndex={-1} className="menutext">Devices</li>
                     <li role="menuitem" tabIndex={-1} className="pane">
-                        <button>Device-01</button>
+                        <button onClick={() => setSite('TEMPORARY')}>temporary</button>
                     </li>
                     <li role="menusplit" tabIndex={-1} className="menusplit"></li>
                     <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
                     <li role="menuitem" tabIndex={-1} className="pane">
-                        <button onClick={() => setSite('devices')}>Edit Devices</button>
+                        <button onClick={() => setSite('setting-devices')}>Edit Devices</button>
+                    </li>
+                    <li role="menuitem" tabIndex={-1} className="pane">
+                        <button onClick={() => setSite('setting-config-database')}>Config / Database</button>
                     </li>
                 </ul>
             </div>
@@ -87,6 +90,14 @@ const Nav = ({ site, setSite }: NavProps) => {
                     <span className="bar bottom"></span>
                 </button>
             </div>
+
+            <div className={`container ${site.includes("dev") ? "vis" : "invis"} add-container`} onClick={() => console.log(" ")}>
+                <button className="square-btn pane">
+                    <span className="bar horizontal"></span>
+                    <span className="bar vertical"></span>
+                </button>
+            </div>
+
             <p>Current: [{site}]</p>
         </nav>
     )

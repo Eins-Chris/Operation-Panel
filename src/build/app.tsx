@@ -387,16 +387,7 @@ export default App;
     Still ToDo:
     
     Maybe overlapping panels
-    Maybe Panels array/list?
     Automated creation of Panels with data from API
-
-    Main Page:
-        panel (100% height, 1 or 2 width) containing all possible devices for "TOPIC" (devices/DEVICEFROMCONFIG/data) and their status (saved in config file)
-        https://chatgpt.com/c/69245870-0164-832d-9be1-3a3e914d13e4 (for list of devices from config)
-        connected device creates panel with link to subsite ../panelID 
-    
-    Dropdown:
-        sites can be edited and panel positions can be saved to another config file
     
     Different use cases:
         rocket telemetry
