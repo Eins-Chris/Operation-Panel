@@ -2,7 +2,17 @@ import { useState, useEffect } from "react";
 import type { Panel } from "./app.tsx";
 
 export function getContent(site: string) {
-    const [panels, setPanels] = useState<Panel[]>(() => []);
+    const [panels, setPanels] = useState<Panel[]>(() => [
+        {
+            id: "id: " + site,
+            col: 2,
+            row: 1,
+            colSize: 4,
+            rowSize: 2,
+            interactive: false,
+            url: "",
+        },
+    ]);
 
     // für die aktualisierung verantwortlich
     useEffect(() => {
