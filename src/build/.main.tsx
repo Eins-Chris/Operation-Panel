@@ -2,7 +2,7 @@ import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import "../styles/.main.css"
 import Background from './background.tsx'
-import Content from './content.tsx'
+import App from './app.tsx'
 import Nav from './nav.tsx'
 
 export type Sites = "home" | "setting-config-database" | "setting-devices" | "TEMPORARY";
@@ -13,7 +13,7 @@ const Main = () => {
     return (
         <>
             <Background />
-            <Content site={site} />
+            <App site={site} />
             <Nav site={site} setSite={setSite} />
         </>
     );

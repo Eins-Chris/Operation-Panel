@@ -1,19 +1,29 @@
-import App from "./app.tsx";
-/* import Home from "./content/home.tsx"; */
-import SetConfigDatabase from "./content/setConfigDatabase.tsx";
-import SetDevices from "./content/setDevices.tsx";
+import { useState, useEffect } from "react";
+import type { Panel } from "./app.tsx";
 
-type Inputs = {
-    site: string;
-}
+export function getContent(site: string) {
+    const [panels, setPanels] = useState<Panel[]>(() => []);
 
-const Content = ({ site }: Inputs) => {
-    switch (site) {
-        case "home": return <App />; {/* <Home /> */};
-        case "setting-config-database": return <SetConfigDatabase />;
-        case "setting-devices": return <SetDevices />;
-        default: return <></>;
-    }
+    // für die aktualisierung verantwortlich
+    useEffect(() => {
+        setPanels([
+            {
+                id: "id: " + site,
+                col: 2,
+                row: 1,
+                colSize: 4,
+                rowSize: 2,
+                interactive: false,
+                url: "",
+            },
+        ]);
+    }, [site]);
+
+    return [panels, setPanels] as const;
 } 
 
-export default Content;
+/* 
+    Hier die Daten aus der Datenbank abgreifen:
+    Für die id werden alle Panels auf der Seite gespeichert.
+    Editierbar und speicherbar, damit aktuelle Ansicht in der Datenbank gespeichert wird.
+ */

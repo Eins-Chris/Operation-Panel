@@ -1,9 +1,9 @@
-import React, { useState } from "react";/* 
-import { connect, MqttClient } from "mqtt"; */
+import React, { useState } from "react";
+import { getContent } from "./content.tsx";
 import "../styles/app.css";
 import { Load } from "./load";
 
-interface Panel {
+export interface Panel {
     id: string;
     col: number;
     row: number;
@@ -23,7 +23,11 @@ type ResizeDir =
     | "bottom-left"
     | "bottom-right";
 
-const App: React.FC = () => {
+type Inputs = {
+    site: string;
+}
+
+const App = ({ site }: Inputs) => {
     // -----------------------------
     // GRID SETTINGS
     // -----------------------------
@@ -39,17 +43,7 @@ const App: React.FC = () => {
     // -----------------------------
     // PANELS
     // -----------------------------
-    const [panels, setPanels] = useState<Panel[]>([
-        {
-        id: "data-panel-id",
-        col: 2,
-        row: 1,
-        colSize: 4,
-        rowSize: 2,
-        interactive: false,
-        url: "",
-        },
-    ]);
+    const [panels, setPanels] = getContent(site);
 
     // -----------------------------
     // DRAGGING
