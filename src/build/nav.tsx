@@ -79,6 +79,12 @@ const Nav = ({ site, setSite }: NavProps) => {
                     <li role="menuitem" tabIndex={-1} className="pane">
                         <button tabIndex={-1} onClick={() => setSite('setting-config-database')}>Config / Database</button>
                     </li>
+                    <li role="menuitem" tabIndex={-1} className="pane">
+                        <button tabIndex={-1} onClick={() => setSite('setting-user')}>
+                            Select User
+                            {/* Datenbank Shit - Wenn kein User selected ist: Select User, wenn einer selected is: Selected User: userID */}
+                        </button>
+                    </li>
                     <li role="menusplit" tabIndex={-1} className="menusplit"></li>
                     <li role="menutext" tabIndex={-1} className="menutext">General</li>
                     <li role="menuitem" tabIndex={-1} className="pane">
@@ -103,7 +109,7 @@ const Nav = ({ site, setSite }: NavProps) => {
                 </button>
             </div>
             <div className="navsplit"></div>
-            <div className={`container ${site.includes("dev") ? "vis" : "invis"} add-container`} onClick={() => console.log(" ")}>
+            <div className={`container add-container ${site.includes("device") ? "visible" : ""}`} onClick={() => console.log(" ")}>
                 <button className="square-btn pane">
                     <PlusIC />
                 </button>

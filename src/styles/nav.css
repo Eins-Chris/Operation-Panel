@@ -77,6 +77,16 @@
     font-size: 2vh;
 }
 
+.add-container {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.add-container.visible {
+    visibility: visible;
+    pointer-events: all;
+}
+
 .navbar p {
     margin-left: 1vh;
 }
