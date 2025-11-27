@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { getContent } from "./content.tsx";
 import "../styles/app.css";
+import { getContent } from "./content.tsx";
 import { Load } from "./load";
 
 export interface Panel {

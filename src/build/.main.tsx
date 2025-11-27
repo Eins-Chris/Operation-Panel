@@ -5,7 +5,7 @@ import Background from './background.tsx'
 import App from './app.tsx'
 import Nav from './nav.tsx'
 
-export type Sites = "home" | "setting-config-database" | "setting-devices" | "TEMPORARY";
+export type Sites = "home" | "info" | "setting-config-database" | "setting-devices" | "TEMPORARY";
 
 const Main = () => {
     const [site, setSite] = useState<Sites>('home');

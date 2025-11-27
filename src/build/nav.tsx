@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/nav.css";
 import type { Sites } from "./.main.tsx";
+import { MenuIC, HomeIC, UploadIC, LoadIC, PlusIC } from "./icons.tsx";
 
 type NavProps = {
-  site: string;
-  setSite: React.Dispatch<React.SetStateAction<Sites>>;
+    site: string;
+    setSite: React.Dispatch<React.SetStateAction<Sites>>;
 };
 
 const Nav = ({ site, setSite }: NavProps) => {
@@ -48,16 +49,15 @@ const Nav = ({ site, setSite }: NavProps) => {
                 aria-haspopup="true"
                 aria-expanded={open}
                 aria-controls="dropdownMenu"
-                title="Menu"
+                title="Menu" 
+                tabIndex={-1}
                 onClick={(e) => {
                     e.stopPropagation();
                     toggleMenu();
                 }}
                 ref={buttonRef}
                 >
-                    <span className="bar bar1"></span>
-                    <span className="bar bar2"></span>
-                    <span className="bar bar3"></span>
+                    <MenuIC open={open} />
                 </button>
 
                 <ul
@@ -69,35 +69,45 @@ const Nav = ({ site, setSite }: NavProps) => {
                 >
                     <li role="menutext" tabIndex={-1} className="menutext">Devices</li>
                     <li role="menuitem" tabIndex={-1} className="pane">
-                        <button onClick={() => setSite('TEMPORARY')}>temporary</button>
+                        <button tabIndex={-1} onClick={() => setSite('TEMPORARY')}>temporary</button>
                     </li>
                     <li role="menusplit" tabIndex={-1} className="menusplit"></li>
                     <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
                     <li role="menuitem" tabIndex={-1} className="pane">
-                        <button onClick={() => setSite('setting-devices')}>Edit Devices</button>
+                        <button tabIndex={-1} onClick={() => setSite('setting-devices')}>Edit Devices</button>
                     </li>
                     <li role="menuitem" tabIndex={-1} className="pane">
-                        <button onClick={() => setSite('setting-config-database')}>Config / Database</button>
+                        <button tabIndex={-1} onClick={() => setSite('setting-config-database')}>Config / Database</button>
+                    </li>
+                    <li role="menusplit" tabIndex={-1} className="menusplit"></li>
+                    <li role="menutext" tabIndex={-1} className="menutext">General</li>
+                    <li role="menuitem" tabIndex={-1} className="pane">
+                        <button tabIndex={-1} onClick={() => setSite('info')}>Information</button>
                     </li>
                 </ul>
             </div>
             <div className="container home-container" >
-                <button className="square-btn pane" onClick={() => setSite('home')}>
-                    <span className="bar roof-left"></span>
-                    <span className="bar roof-right"></span>
-                    <span className="bar wall-left"></span>
-                    <span className="bar wall-right"></span>
-                    <span className="bar bottom"></span>
+                <button className="square-btn pane" tabIndex={-1} onClick={() => setSite('home')}>
+                    <HomeIC />
                 </button>
             </div>
-
+            <div className="navsplit"></div>
+            <div className="container safeToDataBase-container">
+                <button className="square-btn pane" tabIndex={-1}>
+                    <UploadIC />
+                </button>
+            </div>
+            <div className="container loadFromDataBase-container">
+                <button className="square-btn pane" tabIndex={-1}>
+                    <LoadIC />
+                </button>
+            </div>
+            <div className="navsplit"></div>
             <div className={`container ${site.includes("dev") ? "vis" : "invis"} add-container`} onClick={() => console.log(" ")}>
                 <button className="square-btn pane">
-                    <span className="bar horizontal"></span>
-                    <span className="bar vertical"></span>
+                    <PlusIC />
                 </button>
             </div>
-
             <p>Current: [{site}]</p>
         </nav>
     )
