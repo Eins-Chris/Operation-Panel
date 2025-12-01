@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
+import Dexie from "dexie";
+import type { Sites } from "./types.tsx";
 import "../styles/nav.css";
-import type { Sites } from "./.main.tsx";
 import { MenuIC, HomeIC, UploadIC, LoadIC, PlusIC } from "./icons.tsx";
 
 type NavProps = {
+    database: Dexie;
     site: string;
     setSite: React.Dispatch<React.SetStateAction<Sites>>;
+    onSetContent: () => void;
+    onResetContent: () => void;
 };
 
-const Nav = ({ site, setSite }: NavProps) => {
+const Nav = ({ site, setSite, onSetContent, onResetContent }: NavProps) => {
     const [open, setOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
@@ -99,12 +103,12 @@ const Nav = ({ site, setSite }: NavProps) => {
             </div>
             <div className="navsplit"></div>
             <div className="container safeToDataBase-container">
-                <button className="square-btn pane" tabIndex={-1}>
+                <button className="square-btn pane" tabIndex={-1} onClick={() => onSetContent()}>
                     <UploadIC />
                 </button>
             </div>
             <div className="container loadFromDataBase-container">
-                <button className="square-btn pane" tabIndex={-1}>
+                <button className="square-btn pane" tabIndex={-1} onClick={() => onResetContent()}>
                     <LoadIC />
                 </button>
             </div>

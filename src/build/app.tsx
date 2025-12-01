@@ -1,36 +1,14 @@
 import React, { useState } from "react";
 import "../styles/app.css";
-import { getContent } from "./content.tsx";
-import { Load } from "./load";
-
-export interface Panel {
-    id: string;
-    col: number;
-    row: number;
-    colSize: number;
-    rowSize: number;
-    interactive: boolean;
-    url: string;
-}
-
-type ResizeDir =
-    | "left"
-    | "right"
-    | "top"
-    | "bottom"
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right";
+import type { Panel, ResizeDir } from "./types.tsx";
+import { AppContent } from "./content.tsx";
 
 type Inputs = {
-    site: string;
+    panels: Panel[];
+    setPanels: React.Dispatch<React.SetStateAction<Panel[]>>;
 }
 
-const App = ({ site }: Inputs) => {
-    // -----------------------------
-    // GRID SETTINGS
-    // -----------------------------
+const App = ({ panels, setPanels }: Inputs) => {
     const numCols = 8;
     const numRows = 4;
 
@@ -40,32 +18,18 @@ const App = ({ site }: Inputs) => {
     const borderMarginVH = 0.25;
     const panelGapVH = 0.75;
 
-    // -----------------------------
-    // PANELS
-    // -----------------------------
-    const [panels, setPanels] = getContent(site);
-
-    // -----------------------------
-    // DRAGGING
-    // -----------------------------
     const [draggingId, setDraggingId] = useState<string | null>(null);
     const [dragPos, setDragPos] =
         useState<{ row: number; col: number } | null>(null);
     const [dragOffset, setDragOffset] =
         useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-    // -----------------------------
-    // RESIZING
-    // -----------------------------
     const [resizePanelId, setResizePanelId] = useState<string | null>(null);
     const [resizeDir, setResizeDir] = useState<ResizeDir | null>(null);
 
     const [tempPanel, setTempPanel] = useState<Panel | null>(null);
     const [originalPanel, setOriginalPanel] = useState<Panel | null>(null);
 
-    // -----------------------------
-    // Collision check
-    // -----------------------------
     const collides = (panel: Panel) => {
         for (const other of panels) {
         if (other.id === panel.id) continue;
@@ -83,12 +47,9 @@ const App = ({ site }: Inputs) => {
         return false;
     };
 
-    // -----------------------------
-    // DRAG START
-    // -----------------------------
     const handlePointerDown = (e: React.PointerEvent, panel: Panel) => {
         if (!panel.interactive) return;
-        if (resizePanelId) return; // don't drag while resizing
+        if (resizePanelId) return;
 
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
 
@@ -104,9 +65,6 @@ const App = ({ site }: Inputs) => {
         setDragPos({ row: panel.row, col: panel.col });
     };
 
-    // -----------------------------
-    // RESIZE START
-    // -----------------------------
     const startResize = (
         e: React.PointerEvent,
         panel: Panel,
@@ -123,17 +81,11 @@ const App = ({ site }: Inputs) => {
         setOriginalPanel({ ...panel });
     };
 
-    // -----------------------------
-    // POINTER MOVE
-    // -----------------------------
     const handlePointerMove = (e: React.PointerEvent) => {
         const container = (e.currentTarget as HTMLElement).getBoundingClientRect();
         const x = (e.clientX - container.left) / container.width;
         const y = (e.clientY - container.top) / container.height;
 
-        // ----------------------------------------
-        // DRAGGING
-        // ----------------------------------------
         if (draggingId) {
         const panel = panels.find((p) => p.id === draggingId)!;
 
@@ -160,15 +112,11 @@ const App = ({ site }: Inputs) => {
         return;
         }
 
-        // ----------------------------------------
-        // RESIZING
-        // ----------------------------------------
         if (resizePanelId && resizeDir && tempPanel) {
         const newPanel = { ...tempPanel };
         const relCol = Math.floor(x * numCols);
         const relRow = Math.floor(y * numRows);
 
-        // RIGHT
         if (resizeDir.includes("right")) {
             newPanel.colSize = Math.max(
             1,
@@ -176,7 +124,6 @@ const App = ({ site }: Inputs) => {
             );
         }
 
-        // BOTTOM
         if (resizeDir.includes("bottom")) {
             newPanel.rowSize = Math.max(
             1,
@@ -184,7 +131,6 @@ const App = ({ site }: Inputs) => {
             );
         }
 
-        // LEFT
         if (resizeDir.includes("left")) {
             const diff = newPanel.col - relCol;
             let newWidth = newPanel.colSize + diff;
@@ -199,7 +145,6 @@ const App = ({ site }: Inputs) => {
             newPanel.colSize = Math.min(newWidth, numCols - newCol);
         }
 
-        // TOP
         if (resizeDir.includes("top")) {
             const diff = newPanel.row - relRow;
             let newHeight = newPanel.rowSize + diff;
@@ -218,11 +163,7 @@ const App = ({ site }: Inputs) => {
         }
     };
 
-    // -----------------------------
-    // POINTER UP
-    // -----------------------------
     const handlePointerUp = () => {
-        // Drag end
         if (draggingId && dragPos) {
         const p = panels.find((p) => p.id === draggingId)!;
         const updated = { ...p, ...dragPos };
@@ -234,7 +175,6 @@ const App = ({ site }: Inputs) => {
         }
         }
 
-        // Resize end (collision → revert)
         if (resizePanelId && tempPanel && originalPanel) {
         if (collides(tempPanel)) {
             setPanels((prev) =>
@@ -249,7 +189,6 @@ const App = ({ site }: Inputs) => {
         }
         }
 
-        // cleanup
         setDraggingId(null);
         setDragPos(null);
         setDragOffset({ x: 0, y: 0 });
@@ -259,9 +198,6 @@ const App = ({ site }: Inputs) => {
         setOriginalPanel(null);
     };
 
-    // -----------------------------
-    // LOCK TOGGLE
-    // -----------------------------
     const toggleInteractive = (id: string) => {
         setPanels((prev) =>
         prev.map((p) =>
@@ -270,9 +206,6 @@ const App = ({ site }: Inputs) => {
         );
     };
 
-    // -----------------------------
-    // RENDER
-    // -----------------------------
     return (
         <div
         id="panelgrid"
@@ -280,95 +213,27 @@ const App = ({ site }: Inputs) => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         >
-            {panels.map((panel) => {
-                const display =
+            {panels.map(panel => {
+            const display =
                 resizePanelId === panel.id && tempPanel
                     ? tempPanel
                     : draggingId === panel.id && dragPos
                     ? { ...panel, ...dragPos }
                     : panel;
 
-            const [loaded, setLoaded] = useState(false);
             return (
-                <div
-                key={panel.id}
-                className="panel pane"
-                style={{
-                top: `calc(${display.row * slotHeight}% + ${borderMarginVH}vh)`,
-                left: `calc(${display.col * slotWidth}% + ${borderMarginVH}vh)`,
-                width: `calc(${display.colSize * slotWidth}% - ${panelGapVH}vh)`,
-                height: `calc(${display.rowSize * slotHeight}% - ${panelGapVH}vh)`,
-                }}
-                onPointerDown={(e) => handlePointerDown(e, panel)}
-                >
-                    <div id="content-wrapper" className={panel.interactive ? 'interactive' : 'fix'}>
-                        <div className="content">
-                            { !loaded && <Load panelId={panel.id} /> }
-                            <iframe
-                                src={panel.url}
-                                style={{
-                                    display: loaded ? "block" : "none",
-                                    width: "100%",
-                                    height: "100%",
-                                    border: "none",
-                                }}
-                                onLoad={() => setLoaded(true)}
-                            />
-                        </div>
-                    </div>
-
-                    {/* LOCK BUTTON */}
-                    <div
-                    className="lock pane"
-                    onClick={(ev) => {
-                        ev.stopPropagation();
-                        toggleInteractive(panel.id);
-                    }}
-                    >
-                        {panel.interactive ? "🔓" : "🔒"}
-                    </div>
-
-                    {/* RESIZE HANDLES */}
-                    {panel.interactive && (
-                    <>
-                        {/* edges */}
-                        <div
-                        className="resize-handle handle-top"
-                        onPointerDown={(e) => startResize(e, panel, "top")}
-                        />
-                        <div
-                        className="resize-handle handle-bottom"
-                        onPointerDown={(e) => startResize(e, panel, "bottom")}
-                        />
-                        <div
-                        className="resize-handle handle-left"
-                        onPointerDown={(e) => startResize(e, panel, "left")}
-                        />
-                        <div
-                        className="resize-handle handle-right"
-                        onPointerDown={(e) => startResize(e, panel, "right")}
-                        />
-
-                        {/* corners */}
-                        <div
-                        className="resize-handle handle-tl"
-                        onPointerDown={(e) => startResize(e, panel, "top-left")}
-                        />
-                        <div
-                        className="resize-handle handle-tr"
-                        onPointerDown={(e) => startResize(e, panel, "top-right")}
-                        />
-                        <div
-                        className="resize-handle handle-bl"
-                        onPointerDown={(e) => startResize(e, panel, "bottom-left")}
-                        />
-                        <div
-                        className="resize-handle handle-br"
-                        onPointerDown={(e) => startResize(e, panel, "bottom-right")}
-                        />
-                    </>
-                    )}
-                </div>
+                <AppContent
+                    key={panel.id}
+                    panel={panel}
+                    display={display}
+                    slotHeight={slotHeight}
+                    slotWidth={slotWidth}
+                    borderMarginVH={borderMarginVH}
+                    panelGapVH={panelGapVH}
+                    handlePointerDown={handlePointerDown}
+                    toggleInteractive={toggleInteractive}
+                    startResize={startResize}
+                />
             );
         })}
         </div>
