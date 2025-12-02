@@ -1,8 +1,8 @@
 import { StrictMode, useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import type { Panel, Sites } from "./types.tsx";
-import { database } from "./types.tsx";
-import { initializeSite, saveContent, useContent } from './content.tsx';
+import type { Sites } from "./types.tsx";
+import { database, } from "./types.tsx";
+import { initializeSite, saveContent, useContent } from './database.tsx';
 import "../styles/.main.css"
 import Background from './background.tsx'
 import App from './app.tsx'
@@ -22,11 +22,11 @@ const Main = () => {
     }, [site]);
 
     const onSetContent = async () => {
-        console.log("onSetContent");
-
         if (!panels || panels.length === 0) return;
 
-        await saveContent(database, site, panels);
+        const lockedPanels = panels.map(p => ({ ...p, interactive: false }));
+
+        await saveContent(database, site, lockedPanels);
 
         const updated = await database.panels
             .where("site")
@@ -37,7 +37,6 @@ const Main = () => {
     };
 
     const onResetContent = async () => {
-        console.log("onResetContent");
         const defaultPanels = await initializeSite(database, site);
         setPanels(defaultPanels);
     };
@@ -56,3 +55,7 @@ createRoot(document.getElementById('root')!).render(
         <Main />
     </StrictMode>
 );
+
+
+// TO FIX:
+//   Panels can get resised to size 0 0, meaning they disappear.  

@@ -1,52 +1,7 @@
-import { useState, useEffect } from "react";
-import type { PanelDexie, Panel, ResizeDir } from "./types.tsx";
+import React, { useState } from "react";
+import type { Panel, ResizeDir } from "./types.tsx";
+import "../styles/content.css";
 import { Load } from "./load.tsx";
-
-export function useContent(database: PanelDexie, site: string) {
-    const [panels, setPanels] = useState<Panel[]>([]);
-
-    useEffect(() => {
-        database.panels
-            .where("site")
-            .equals(site)
-            .toArray()
-            .then((result) => setPanels(result));
-    }, [site, database]);
-
-    return { panels, setPanels };
-}
-
-export async function saveContent(
-    database: PanelDexie,
-    site: string,
-    panels: Panel[]
-) {
-    const oldIds = await database.panels.where("site").equals(site).primaryKeys();
-    await database.panels.bulkDelete(oldIds);
-    await database.panels.bulkPut(panels);
-}
-
-export const initializeSite = async (database: PanelDexie, site: string): Promise<Panel[]> => {
-    let panels = await database.panels.where("site").equals(site).toArray();
-
-    if (panels.length === 0) {
-        const panel: Panel = {
-        id: "id:" + site,
-        site,
-        col: 2,
-        row: 1,
-        colSize: 4,
-        rowSize: 2,
-        interactive: false,
-        url: ""
-        };
-
-        await database.panels.add(panel); 
-        panels = [panel];
-    }
-
-    return panels;
-};
 
 export function AppContent({
     panel,
@@ -70,6 +25,25 @@ export function AppContent({
     startResize: (e: React.PointerEvent, panel: Panel, direction: ResizeDir) => void;
 }) {
     const [loaded, setLoaded] = useState(false);
+    const [hasContent, setHasContent] = useState<boolean | null>(null);
+    React.useEffect(() => {
+        let active = true;
+
+        async function checkContent() {
+            try {
+                const module = await import(`./contents/${panel.site}.tsx`);
+                const exists = !!module[panel.id];
+
+                if (active) setHasContent(exists);
+            } catch (err) {
+                if (active) setHasContent(false);
+            }
+        }
+
+        checkContent();
+        return () => { active = false; };
+    }, [panel.site, panel.id]);
+
 
     return (
         <div
@@ -84,18 +58,15 @@ export function AppContent({
         >
             <div id="content-wrapper" className={panel.interactive ? 'interactive' : 'fix'}>
                 <div className="content">
-                    {!loaded && <Load panelId={panel.id} />}
-
-                    <iframe
-                        src={panel.url}
-                        style={{
-                            display: loaded ? "block" : "none",
-                            width: "100%",
-                            height: "100%",
-                            border: "none",
-                        }}
-                        onLoad={() => setLoaded(true)}
-                    />
+                    {hasContent === null && <Load panelId={panel.id} />}
+                    {hasContent === false && <Load panelId={panel.id} />}
+                    {hasContent === true && (
+                        loaded ? (
+                            <Load panelId={panel.id} />
+                        ) : (
+                            <PanelContent panel={panel} onLoaded={() => setLoaded(true)} />
+                        )
+                    )}
                 </div>
             </div>
 
@@ -125,6 +96,35 @@ export function AppContent({
         </div>
     );
 }
+
+export function PanelContent({ panel, onLoaded }: { panel: Panel; onLoaded: () => void; }) {
+    const LazyContent = React.lazy(async () => {
+        try {
+            const module = await import(`./contents/${panel.site}.tsx`);
+            const content = module[panel.id];
+
+            if (!content) {
+                React.useEffect(() => { onLoaded(); }, []);
+                return { default: () => null };
+            }
+
+            return { default: content };
+        } catch (err) {
+            React.useEffect(() => { onLoaded(); }, []);
+            return { default: () => null };
+        }
+    });
+
+    return (
+        <React.Suspense fallback={null}>
+            <LazyContent />
+        </React.Suspense>
+    );
+}
+
+
+
+
 
 
 /* 

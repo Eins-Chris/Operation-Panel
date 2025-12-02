@@ -6,7 +6,7 @@ export class PanelDexie extends Dexie {
     constructor() {
             super("PanelStorage");
             this.version(1).stores({
-            panels: "id, site"
+            panels: "++id, site"
         });
     }
 }
@@ -21,7 +21,6 @@ export interface Panel {
     colSize: number;
     rowSize: number;
     interactive: boolean;
-    url: string;
 }
 
 export type ResizeDir =
