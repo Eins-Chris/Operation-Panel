@@ -57,7 +57,7 @@ export function AppContent({
             onPointerDown={(e) => handlePointerDown(e, panel)}
         >
             <div id="content-wrapper" className={panel.interactive ? 'interactive' : 'fix'}>
-                <div className="content">
+                <div className="content" id={panel.site + "-" + panel.id}>
                     {hasContent === null && <Load panelId={panel.id} />}
                     {hasContent === false && <Load panelId={panel.id} />}
                     {hasContent === true && (
