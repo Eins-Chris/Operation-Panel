@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { exportDatabase, importDatabase } from "../database.tsx";
-import { database } from "../types.tsx";
+import { database, exportDatabase, importDatabase } from "../database.tsx";
 
 
 export const DatabaseInfo = () => {
@@ -37,9 +36,6 @@ const DetailedTree = () => {
 }
 
 
-/* 
-    Aktuelles Problem: Ich kann keine Datenbank exportieren oder importieren, wenn ich keinen Zugriff auf die datenbank selbst hab.
- */
 
 export const Import = () => {
     const [importText, setImportText] = useState("");
