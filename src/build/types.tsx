@@ -1,19 +1,5 @@
-import Dexie, { type Table } from "dexie";
-
-export class PanelDexie extends Dexie {
-  panels!: Table<Panel, number>;
-
-    constructor() {
-            super("PanelStorage");
-            this.version(1).stores({
-            panels: "++id, site"
-        });
-    }
-}
-
-export const database = new PanelDexie;
-
 export interface Panel {
+    dbid?: number;
     id: string;
     site: string;
     col: number;

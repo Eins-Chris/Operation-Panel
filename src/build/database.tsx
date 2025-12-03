@@ -1,5 +1,20 @@
 import { useState, useEffect } from "react";
-import type { PanelDexie, Panel } from "./types.tsx";
+import type { Panel } from "./types.tsx";
+import Dexie, { type Table } from "dexie";
+
+export class PanelDexie extends Dexie {
+    panels!: Table<Panel, number>;
+
+    constructor() {
+        super("PanelStorage");
+
+        this.version(1).stores({
+            panels: "++dbid, site, id, [site+id]"
+        });
+    }
+}
+
+export const database = new PanelDexie();
 
 export function useContent(database: PanelDexie, site: string) {
     const [panels, setPanels] = useState<Panel[]>([]);
@@ -20,32 +35,22 @@ export async function saveContent(
     site: string,
     panels: Panel[]
 ) {
-    const oldIds = await database.panels.where("site").equals(site).primaryKeys();
-    await database.panels.bulkDelete(oldIds);
-    await database.panels.bulkPut(panels);
+    for (const panel of panels) {
+        const existing = await database.panels
+            .where("[site+id]")
+            .equals([site, panel.id])
+            .first();
+
+        if (existing) {
+            await database.panels.update(existing.dbid!, panel);
+        } else {
+            await database.panels.add(panel);
+        }
+    }
 }
 
 export const initializeSite = async (database: PanelDexie, site: string): Promise<Panel[]> => {
     let panels = await database.panels.where("site").equals(site).toArray();
-
-    if (panels.length === 0) {
-        const panel: Panel = {
-        id: "test-article",
-        site,
-        col: 2,
-        row: 1,
-        colSize: 4,
-        rowSize: 2,
-        interactive: false
-        };
-
-        await database.panels.add(panel); 
-        panels = [panel];
-    }
-
-    // Export der aktuellen Datenbank
-    if (site === "setting-config-database") console.log(exportDatabase(database));
-
     return panels;
 };
 
