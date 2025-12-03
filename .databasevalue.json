@@ -2,23 +2,12 @@
   "panels": [
     {
       "site": "home",
-      "id": "Info",
+      "id": "GeneralInformation",
       "col": 2,
       "row": 1,
       "colSize": 4,
       "rowSize": 2,
-      "interactive": false,
-      "content": ""
-    },
-    {
-      "site": "TEMPORARY",
-      "id": "id:TEMPORARY",
-      "col": 2,
-      "row": 1,
-      "colSize": 4,
-      "rowSize": 2,
-      "interactive": false,
-      "content": ""
+      "interactive": false
     },
     {
       "site": "info",
@@ -27,18 +16,7 @@
       "row": 0,
       "colSize": 4,
       "rowSize": 2,
-      "interactive": false,
-      "content": ""
-    },
-    {
-      "site": "info",
-      "id": "StillUnderHeavyDevelopment",
-      "col": 0,
-      "row": 2,
-      "colSize": 8,
-      "rowSize": 1,
-      "interactive": false,
-      "content": ""
+      "interactive": false
     },
     {
       "site": "info",
@@ -47,48 +25,70 @@
       "row": 3,
       "colSize": 8,
       "rowSize": 1,
-      "interactive": false,
-      "content": ""
+      "interactive": false
+    },
+    {
+      "site": "info",
+      "id": "StillUnderDevelopment",
+      "col": 0,
+      "row": 2,
+      "colSize": 8,
+      "rowSize": 1,
+      "interactive": false
+    },
+    {
+      "site": "setting-user",
+      "id": "UserAdministration",
+      "col": 2,
+      "row": 1,
+      "colSize": 4,
+      "rowSize": 2,
+      "interactive": false
     },
     {
       "site": "setting-config-database",
       "id": "DatabaseInfo",
       "col": 0,
       "row": 0,
-      "colSize": 4,
-      "rowSize": 2,
-      "interactive": false,
-      "content": ""
+      "colSize": 3,
+      "rowSize": 4,
+      "interactive": false
     },
     {
       "site": "setting-config-database",
-      "id": "ImportExport",
+      "id": "Import",
       "col": 4,
       "row": 0,
-      "colSize": 4,
-      "rowSize": 2,
-      "interactive": false,
-      "content": ""
+      "colSize": 2,
+      "rowSize": 4,
+      "interactive": false
+    },
+    {
+      "site": "setting-config-database",
+      "id": "Export",
+      "col": 6,
+      "row": 0,
+      "colSize": 2,
+      "rowSize": 4,
+      "interactive": false
     },
     {
       "site": "setting-devices",
-      "id": "id:setting-devices",
+      "id": "DeviceList",
       "col": 2,
       "row": 1,
       "colSize": 4,
       "rowSize": 2,
-      "interactive": false,
-      "content": ""
+      "interactive": false
     },
     {
-      "site": "setting-user",
-      "id": "id:setting-user",
+      "site": "TEMPORARY",
+      "id": "Temporary",
       "col": 2,
       "row": 1,
       "colSize": 4,
       "rowSize": 2,
-      "interactive": false,
-      "content": ""
+      "interactive": false
     }
   ]
 }
