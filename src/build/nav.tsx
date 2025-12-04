@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import Dexie from "dexie";
 import type { Sites } from "./types.tsx";
 import "../styles/nav.css";
 import { MenuIC, HomeIC, UploadIC, LoadIC, PlusIC } from "./icons.tsx";
 
 type NavProps = {
-    database: Dexie;
     site: string;
     setSite: React.Dispatch<React.SetStateAction<Sites>>;
     onSetContent: () => void;

@@ -49,10 +49,10 @@ export function AppContent({
         <div
             className="panel pane"
             style={{
-                top: `calc(${display.row * slotHeight}% + ${borderMarginVH}vh)`,
-                left: `calc(${display.col * slotWidth}% + ${borderMarginVH}vh)`,
-                width: `calc(${display.colSize * slotWidth}% - ${panelGapVH}vh)`,
-                height: `calc(${display.rowSize * slotHeight}% - ${panelGapVH}vh)`,
+                top: `calc(${display.startH * slotHeight}% + ${borderMarginVH}vh)`,
+                left: `calc(${display.startW * slotWidth}% + ${borderMarginVH}vh)`,
+                width: `calc(${display.width * slotWidth}% - ${panelGapVH}vh)`,
+                height: `calc(${display.height * slotHeight}% - ${panelGapVH}vh)`,
             }}
             onPointerDown={(e) => handlePointerDown(e, panel)}
         >

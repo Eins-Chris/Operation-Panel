@@ -2,10 +2,10 @@ export interface Panel {
     dbid?: number;
     id: string;
     site: string;
-    col: number;
-    row: number;
-    colSize: number;
-    rowSize: number;
+    startW: number;
+    startH: number;
+    width: number;
+    height: number;
     interactive: boolean;
 }
 

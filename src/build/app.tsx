@@ -35,12 +35,12 @@ const App = ({ panels, setPanels }: Inputs) => {
         if (other.id === panel.id) continue;
 
         const overlapX =
-            panel.col < other.col + other.colSize &&
-            panel.col + panel.colSize > other.col;
+            panel.startW < other.startW + other.width &&
+            panel.startW + panel.width > other.startW;
 
         const overlapY =
-            panel.row < other.row + other.rowSize &&
-            panel.row + panel.rowSize > other.row;
+            panel.startH < other.startH + other.height &&
+            panel.startH + panel.height > other.startH;
 
         if (overlapX && overlapY) return true;
         }
@@ -57,12 +57,12 @@ const App = ({ panels, setPanels }: Inputs) => {
         const pointerX = e.clientX - container.left;
         const pointerY = e.clientY - container.top;
 
-        const panelLeft = panel.col * container.width / numCols;
-        const panelTop = panel.row * container.height / numRows;
+        const panelLeft = panel.startW * container.width / numCols;
+        const panelTop = panel.startH * container.height / numRows;
 
         setDragOffset({ x: pointerX - panelLeft, y: pointerY - panelTop });
         setDraggingId(panel.id);
-        setDragPos({ row: panel.row, col: panel.col });
+        setDragPos({ row: panel.startH, col: panel.startW });
     };
 
     const startResize = (
@@ -96,7 +96,7 @@ const App = ({ panels, setPanels }: Inputs) => {
             0,
             Math.min(
             Math.floor((pointerX - dragOffset.x) / container.width * numCols),
-            numCols - panel.colSize
+            numCols - panel.width
             )
         );
 
@@ -104,7 +104,7 @@ const App = ({ panels, setPanels }: Inputs) => {
             0,
             Math.min(
             Math.floor((pointerY - dragOffset.y) / container.height * numRows),
-            numRows - panel.rowSize
+            numRows - panel.height
             )
         );
 
@@ -118,22 +118,22 @@ const App = ({ panels, setPanels }: Inputs) => {
         const relRow = Math.floor(y * numRows);
 
         if (resizeDir.includes("right")) {
-            newPanel.colSize = Math.max(
+            newPanel.width = Math.max(
             1,
-            Math.min(relCol - newPanel.col + 1, numCols - newPanel.col)
+            Math.min(relCol - newPanel.startW + 1, numCols - newPanel.startW)
             );
         }
 
         if (resizeDir.includes("bottom")) {
-            newPanel.rowSize = Math.max(
+            newPanel.height = Math.max(
             1,
-            Math.min(relRow - newPanel.row + 1, numRows - newPanel.row)
+            Math.min(relRow - newPanel.startH + 1, numRows - newPanel.startH)
             );
         }
 
         if (resizeDir.includes("left")) {
-            const diff = newPanel.col - relCol;
-            let newWidth = newPanel.colSize + diff;
+            const diff = newPanel.startW - relCol;
+            let newWidth = newPanel.width + diff;
             let newCol = relCol;
 
             if (newCol < 0) {
@@ -141,13 +141,13 @@ const App = ({ panels, setPanels }: Inputs) => {
             newCol = 0;
             }
             if (newWidth < 1) newWidth = 1;
-            newPanel.col = newCol;
-            newPanel.colSize = Math.min(newWidth, numCols - newCol);
+            newPanel.startW = newCol;
+            newPanel.width = Math.min(newWidth, numCols - newCol);
         }
 
         if (resizeDir.includes("top")) {
-            const diff = newPanel.row - relRow;
-            let newHeight = newPanel.rowSize + diff;
+            const diff = newPanel.startH - relRow;
+            let newHeight = newPanel.height + diff;
             let newRow = relRow;
 
             if (newRow < 0) {
@@ -155,8 +155,8 @@ const App = ({ panels, setPanels }: Inputs) => {
             newRow = 0;
             }
             if (newHeight < 1) newHeight = 1;
-            newPanel.row = newRow;
-            newPanel.rowSize = Math.min(newHeight, numRows - newRow);
+            newPanel.startH = newRow;
+            newPanel.height = Math.min(newHeight, numRows - newRow);
         }
 
         setTempPanel(newPanel);
@@ -214,28 +214,28 @@ const App = ({ panels, setPanels }: Inputs) => {
         onPointerCancel={handlePointerUp}
         >
             {panels.map(panel => {
-            const display =
-                resizePanelId === panel.id && tempPanel
-                    ? tempPanel
-                    : draggingId === panel.id && dragPos
-                    ? { ...panel, ...dragPos }
-                    : panel;
+                const display =
+                    resizePanelId === panel.id && tempPanel
+                        ? tempPanel
+                        : draggingId === panel.id && dragPos
+                        ? { ...panel, ...dragPos }
+                        : panel;
 
-            return (
-                <AppContent
-                    key={panel.id}
-                    panel={panel}
-                    display={display}
-                    slotHeight={slotHeight}
-                    slotWidth={slotWidth}
-                    borderMarginVH={borderMarginVH}
-                    panelGapVH={panelGapVH}
-                    handlePointerDown={handlePointerDown}
-                    toggleInteractive={toggleInteractive}
-                    startResize={startResize}
-                />
-            );
-        })}
+                return (
+                    <AppContent
+                        key={panel.dbid}
+                        panel={panel}
+                        display={display}
+                        slotHeight={slotHeight}
+                        slotWidth={slotWidth}
+                        borderMarginVH={borderMarginVH}
+                        panelGapVH={panelGapVH}
+                        handlePointerDown={handlePointerDown}
+                        toggleInteractive={toggleInteractive}
+                        startResize={startResize}
+                    />
+                );
+            })}
         </div>
     );
 };
