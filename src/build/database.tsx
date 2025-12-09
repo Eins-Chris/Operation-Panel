@@ -54,6 +54,10 @@ export const initializeSite = async (database: PanelDexie, site: string): Promis
     return panels;
 };
 
+export function addPanelToDB(site:string, id:string, startW:number, startH:number, width:number, height:number) {
+    
+}
+
 export async function exportDatabase(database: PanelDexie) {
     const exportData: Record<string, any[]> = {};
 
@@ -77,4 +81,8 @@ export async function importDatabase(database: PanelDexie, jsonString: string) {
         await table.clear();
         await table.bulkAdd(jsonData[tableName]);
     }
+}
+
+export async function getAllPanels() {
+    return await database.panels.toArray();
 }

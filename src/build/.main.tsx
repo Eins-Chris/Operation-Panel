@@ -48,7 +48,7 @@ const Main = () => {
         <>
             <Background />
             <App panels={panels} setPanels={setPanels} />
-            <Nav database={database} site={site} setSite={setSite} onSetContent={onSetContent} onResetContent={onResetContent} />
+            <Nav site={site} setSite={setSite} onSetContent={onSetContent} onResetContent={onResetContent} />
         </>
     );
 };
