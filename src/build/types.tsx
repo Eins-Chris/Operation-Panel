@@ -49,6 +49,7 @@ export const InputField: React.FC<InputFieldProps> = ({ label, options, value, o
                 </label>
             )}
 
+            <div
             className="inputFieldInput"
             onClick={onToggle}
             style={{
@@ -87,6 +88,7 @@ export const InputField: React.FC<InputFieldProps> = ({ label, options, value, o
                         key={option}
                         onClick={() => {
                             onChange(option);
+                            onToggle;
                         }}
                         style={{
                             padding: "14px",
