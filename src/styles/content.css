@@ -47,6 +47,9 @@
 ---------- 
 */
 /* DatabaseInfo */
+.positionvisual-size {
+    --simulator-width: 600px;
+}
 
 
 /* 

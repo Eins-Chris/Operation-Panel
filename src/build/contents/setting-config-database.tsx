@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { database, exportDatabase, getAllPanels, importDatabase } from "../database.tsx";
-import { getSites, InputField, type Panel, type Sites } from "../types.tsx";
+import { addPanelToDB, database, exportDatabase, getAllPanels, importDatabase } from "../database.tsx";
+import { getSites, InputField, PositionVisual, type Panel, type Sites } from "../types.tsx";
+import "./../../styles/content.css";
 
 export const DatabaseInfo = () => {
     const [panels, setPanels] = useState<Panel[]>([]);
@@ -117,12 +118,16 @@ export const Controller = () => {
 }
 const Creator = () => {
     const [openDropdown, setOpenDropdown] = useState<"site" | "id" | null>(null);
+
     const [site, setSite] = useState<string>("all");
     const siteOptions: SiteFilter[] = ["all", ...getSites];
     const [id, setId] = useState<string>("");
     const [avids, setAvids] = useState<string[]>([]);
     const [pendingId, setPendingId] = useState<string | null>(null);
 
+    const [position, setPosition] = useState<number[]>([0,0,0,0]);
+    const [validPos, setValidPos] = useState(false);
+    
     useEffect(() => {
         let cancelled = false;
 
@@ -132,7 +137,7 @@ const Creator = () => {
 
             for (const s of selectedSites) {
                 try {
-                    const module = await import(`./${s}.tsx`);
+                    const module = await import(/* @vite-ignore */ `./${s}.tsx`); 
                     const keys = Object.keys(module);
 
                     keys.forEach((k) => {
@@ -143,7 +148,7 @@ const Creator = () => {
                         }
                     });
                 } catch (e) {
-                    console.warn("Fehler beim Laden von", s, e);
+                    console.warn("Error loading", s, e);
                 }
             }
 
@@ -153,6 +158,7 @@ const Creator = () => {
                 if (pendingId) {
                     setId(pendingId);
                     setPendingId(null);
+                    setPosition([3, 1, 2, 2]);
                 } else {
                     setId("");
                 }
@@ -178,7 +184,6 @@ const Creator = () => {
                 isOpen={openDropdown === "site"} 
                 onToggle={() => setOpenDropdown(openDropdown === "site" ? null : "site")}
                 />
-
                 <InputField
                 label="ID"
                 options={avids}
@@ -198,6 +203,22 @@ const Creator = () => {
                 placeholder="Select ID..."
                 />
 
+                <PositionVisual 
+                visible={!!(site && id)}
+                editable={true}
+                site={site}
+                position={position}
+                setPosition={setPosition}
+                validPos={setValidPos}
+                />
+
+                <button 
+                type="submit"
+                tabIndex={-1}
+                style={{color: "black"}}
+                disabled={!(validPos && !!(site && id))}
+                onClick={() => addPanelToDB(site, id, position[0], position[1], position[2], position[3])}
+                >Create Panel</button>
 
                 {/* 
                 Im Tree für jede site ein Grid anzeigen, welches visualisiert wo welche Panels sind und wo was frei ist.

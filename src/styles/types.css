@@ -1,0 +1,147 @@
+/* Container sichtbar/unsichtbar */
+.positionvisual.visible {
+    display: flex;
+    flex-direction: column;
+}
+
+.positionvisual.invisible {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Simulator skaliert automatisch */
+.site-simulator {
+    position: relative;
+
+    /* Breite fix = Höhe abhängig */
+    width: var(--simulator-width);
+    height: calc(var(--simulator-width) / 2);
+
+    border: 2px solid #444;
+    background: #f7f7f7;
+
+    overflow: hidden;
+}
+
+
+/* GRID – 8x4 dynamisch */
+.positionvisual.invisible .grid-overlay {background-color: gray;}
+.grid-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    pointer-events: none;
+}
+
+.grid-cell {
+    border: 1px dashed #bbb;
+}
+
+
+/* Panels — verwenden Prozentwerte basierend auf 8×4 Einteilung */
+.existing-panel,
+.new-panel {
+    position: absolute;
+
+    left: calc(var(--x) * (100% / 8));
+    top: calc(var(--y) * (100% / 4));
+    width: calc(var(--w) * (100% / 8));
+    height: calc(var(--h) * (100% / 4));
+
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    font-weight: bold;
+}
+
+/* Farben */
+.existing-panel {
+    background: rgba(0, 100, 255, 0.5);
+    border: 2px solid #003f99;
+}
+
+.new-panel.valid {
+    background: rgba(0, 200, 0, 0.45);
+    border: 2px solid green;
+}
+
+.new-panel.invalid {
+    background: rgba(255, 0, 0, 0.45);
+    border: 2px solid red;
+}
+
+
+
+
+
+
+/* Buttons */
+/* Die Buttons sollen relativ zum .resize-container arbeiten */
+.resize {
+    position: relative;
+}
+
+/* Kreis parametrierbar (nur vh) */
+.resize {
+    --circle-size: 20vh;      /* Durchmesser */
+    --btn-size: 5vh;          /* Button-Größe */
+    --arrow-w: 1.8vh;         /* Pfeilbreite */
+    --arrow-h: 2.6vh;         /* Pfeilhöhe */
+    --radius: calc(var(--circle-size) / 2 - var(--btn-size) / 2);
+}
+
+/* Buttons resetten */
+.rebtn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Inhalt entfernen */
+.rebtn::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: var(--arrow-w) solid transparent;
+    border-right: var(--arrow-w) solid transparent;
+    border-bottom: var(--arrow-h) solid #000;
+    display: block;
+    margin: auto;
+}
+
+/* Positionen auf dem Kreis (rotate + translateY) */
+.rebtn.up {
+    transform: translate(-50%, -50%) rotate(0deg) translateY(calc(-1 * var(--radius)));
+}
+
+.rebtn.ri {
+    transform: translate(-50%, -50%) rotate(90deg) translateY(calc(-1 * var(--radius)));
+}
+
+.rebtn.do {
+    transform: translate(-50%, -50%) rotate(180deg) translateY(calc(-1 * var(--radius)));
+}
+
+.rebtn.le {
+    transform: translate(-50%, -50%) rotate(-90deg) translateY(calc(-1 * var(--radius)));
+}
+
+/* Pfeile mitdrehen */
+
+/* Überschrift nicht stören lassen */
+.resize h1 {
+    text-align: center;
+    margin-bottom: 2vh;
+}

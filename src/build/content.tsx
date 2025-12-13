@@ -47,6 +47,7 @@ export function AppContent({
 
     return (
         <div
+            key={panel.dbid}
             className="panel pane"
             style={{
                 top: `calc(${display.startH * slotHeight}% + ${borderMarginVH}vh)`,
