@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import "../styles/background.css";
 
-export default function Background() {
+type BackgroundProps = {
+    url?: string;
+};
+
+export const Background = ({ url }: BackgroundProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const url = "";
 
     useEffect(() => {
         const canvas = canvasRef.current!;
@@ -30,7 +33,7 @@ export default function Background() {
                 window.removeEventListener("resize", resize);
             };
         }
-        
+
         class Particle {
             x: number;
             y: number;
@@ -116,6 +119,7 @@ export default function Background() {
             window.removeEventListener("resize", resize);
         };
     }, []);
+
 
     return <canvas ref={canvasRef} id="background-canvas" />;
 }
