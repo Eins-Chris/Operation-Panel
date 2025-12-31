@@ -12,11 +12,25 @@ export default function Background() {
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
-            // Partikel neu generieren
-            recreateParticles();
         }
 
+        resize();
+        window.addEventListener("resize", resize);
+
+        if (url) {
+            const img = new Image();
+            img.src = url;
+
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+
+            return () => {
+                window.removeEventListener("resize", resize);
+            };
+        }
+        
         class Particle {
             x: number;
             y: number;
@@ -57,8 +71,7 @@ export default function Background() {
             particles = Array.from({ length: COUNT }, () => new Particle());
         }
 
-        resize();
-        window.addEventListener("resize", resize);
+        recreateParticles();
 
         let animationFrame: number;
 
@@ -96,7 +109,6 @@ export default function Background() {
             animationFrame = requestAnimationFrame(animate);
         }
 
-        recreateParticles();
         animate();
 
         return () => {
