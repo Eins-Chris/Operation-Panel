@@ -1,0 +1,94 @@
+{
+  "panels": [
+    {
+      "site": "home",
+      "id": "GeneralInformation",
+      "startW": 2,
+      "startH": 1,
+      "width": 4,
+      "height": 2,
+      "interactive": false
+    },
+    {
+      "site": "info",
+      "id": "GeneralInformation",
+      "startW": 0,
+      "startH": 0,
+      "width": 4,
+      "height": 2,
+      "interactive": false
+    },
+    {
+      "site": "info",
+      "id": "NavInformation",
+      "startW": 0,
+      "startH": 3,
+      "width": 8,
+      "height": 1,
+      "interactive": false
+    },
+    {
+      "site": "info",
+      "id": "StillUnderDevelopment",
+      "startW": 0,
+      "startH": 2,
+      "width": 8,
+      "height": 1,
+      "interactive": false
+    },
+    {
+      "site": "setting-user",
+      "id": "UserAdministration",
+      "startW": 2,
+      "startH": 1,
+      "width": 4,
+      "height": 2,
+      "interactive": false
+    },
+    {
+      "site": "setting-config-database",
+      "id": "DatabaseInfo",
+      "startW": 0,
+      "startH": 0,
+      "width": 3,
+      "height": 4,
+      "interactive": false
+    },
+    {
+      "site": "setting-config-database",
+      "id": "Import",
+      "startW": 4,
+      "startH": 0,
+      "width": 2,
+      "height": 4,
+      "interactive": false
+    },
+    {
+      "site": "setting-config-database",
+      "id": "Export",
+      "startW": 6,
+      "startH": 0,
+      "width": 2,
+      "height": 4,
+      "interactive": false
+    },
+    {
+      "site": "setting-devices",
+      "id": "DeviceList",
+      "startW": 2,
+      "startH": 1,
+      "width": 4,
+      "height": 2,
+      "interactive": false
+    },
+    {
+      "site": "TEMPORARY",
+      "id": "Temporary",
+      "startW": 2,
+      "startH": 1,
+      "width": 4,
+      "height": 2,
+      "interactive": false
+    }
+  ]
+}

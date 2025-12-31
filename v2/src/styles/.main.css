@@ -1,0 +1,23 @@
+* {
+    color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #102131;
+    overflow: hidden;
+    margin: 0;
+}
+
+body.possiblevariation {
+    background: radial-gradient(#222922, #000500);
+}
+
+.pane {
+    background-color: rgba(0, 140, 255, 0.1);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    border: 0.05vh solid rgba(0, 0, 0, 0.3);
+    border-radius: 1vh;
+    margin: 0.25vh;
+}

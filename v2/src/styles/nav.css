@@ -1,0 +1,103 @@
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: -webkit-fill-available;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.navbar .container {
+    position: relative;
+    padding: 1vh 1vh 1vh 0;
+}
+
+.navbar .dropdown-container {
+    padding: 1vh;
+}
+
+.navbar .container .square-btn {
+    width: 3vh;
+    height: 3vh;
+    background: transparent;
+    border: 0.16vh solid white;
+    border-radius: 0.5vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0;
+}
+
+.dropdown-container .dropdown-menu {
+    position: absolute;
+    bottom: 5.5vh;
+    left: 0;
+    list-style: none;
+    padding: 0;
+    display: none;
+    min-width: 20vh;
+}
+
+.dropdown-container.open .dropdown-menu {
+    display: block;
+    animation: slideUp 0.2s ease-out;
+}
+
+.dropdown-container .dropdown-menu li button {
+    width: 100%;
+    background: none;
+    padding: 1vh;
+    border: 0.1vh;
+    text-align: left;
+    font-size: 2vh;
+    cursor: pointer;
+    border-radius: 1vh;
+}
+
+.dropdown-container .dropdown-menu li button:hover,
+.dropdown-container .dropdown-menu li button:focus {
+    background-color: radial-gradient(#222922, #000500);
+    outline: none;
+}
+
+.dropdown-container .dropdown-menu .menusplit {
+    height: 1vh;
+}
+
+.dropdown-container .dropdown-menu .menutext {
+    padding: 0;
+    margin: 1vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
+.add-container {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.add-container.visible {
+    visibility: visible;
+    pointer-events: all;
+}
+
+.navbar p {
+    margin-left: 1vh;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
