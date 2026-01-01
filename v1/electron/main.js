@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const { DEV_SERVER_PORT } = require('./config');
 
 let mainWindow;
 
@@ -18,7 +19,7 @@ function createWindow() {
   // In development mode, load from Vite dev server
   // In production, load from the built files
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.loadURL(`http://localhost:${DEV_SERVER_PORT}`);
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../docs/index.html'));

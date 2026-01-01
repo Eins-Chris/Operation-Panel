@@ -9,7 +9,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "electron:dev": "NODE_ENV=development electron .",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
     "electron:build": "npm run build && electron-builder",
     "electron:start": "electron ."
   },
@@ -26,13 +26,23 @@
     },
     "mac": {
       "category": "public.app-category.productivity",
-      "target": ["dmg", "zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "win": {
-      "target": ["nsis", "portable"]
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "linux": {
-      "target": ["AppImage", "deb", "rpm"],
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ],
       "category": "Utility"
     }
   },
@@ -48,6 +58,7 @@
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "cross-env": "^10.1.0",
     "electron": "^39.2.7",
     "electron-builder": "^26.0.12",
     "eslint": "^9.39.1",
