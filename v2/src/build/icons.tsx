@@ -55,6 +55,18 @@ export const SettingsIC = ({small}:{small?:boolean}) => {
     );
 }
 
+export const SpotifyIC = ({small, nofilter}:{ small?:boolean, nofilter?:boolean }) => {
+    return (
+        <img src="./src/resources/icons/Spotify.svg" alt="#" className="icon" style={{ ...(small && {width: "3vh", height: "3vh", marginRight: "0.25vw"}), ...(nofilter && {filter:"none"})}}/>
+    );
+}
+
+export const TopdownIC = ({small}:{small?:boolean}) => {
+    return (
+        <img src="./src/resources/icons/Topdown.svg" alt="#" className="icon" style={small ? {width: "3vh", height: "3vh", marginRight: "0.25vw"} : {}}/>
+    );
+}
+
 export const UsersIC = ({small}:{small?:boolean}) => {
     return (
         <img src="./src/resources/icons/Users.svg" alt="#" className="icon" style={small ? {width: "3vh", height: "3vh", marginRight: "0.25vw"} : {}}/>

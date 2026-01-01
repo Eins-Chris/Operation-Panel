@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import '../styles/nav.css'
-import { MenuIC, HomeIC, NaviIC, InformationIC, SettingsIC, UsersIC, InstructionIC, FavouritesIC } from './icons.tsx'
+import { MenuIC, HomeIC, NaviIC, InformationIC, SettingsIC, UsersIC, InstructionIC, FavouritesIC, TopdownIC, SpotifyIC } from './icons.tsx'
 
 type NavProps = {
     setSite: React.Dispatch<React.SetStateAction<string>>;
@@ -90,6 +90,12 @@ const Nav = ({ setSite }: NavProps) => {
                 </button>
                 <button className="option pane" tabIndex={-1} onClick={() => setSite('navigation')}>
                     <NaviIC />
+                </button>
+                <button className="option pane" tabIndex={-1} onClick={() => setSite('topdown')}>
+                    <TopdownIC />
+                </button>
+                <button className="option pane" tabIndex={-1} onClick={() => setSite('spotify')}>
+                    <SpotifyIC nofilter={true} />
                 </button>
             </div>
         </nav>
