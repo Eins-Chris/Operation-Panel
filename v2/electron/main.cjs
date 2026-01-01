@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const { DEV_SERVER_PORT } = require('./config');
+const { DEV_SERVER_PORT } = require('./config.cjs');
 
 let mainWindow;
 
@@ -11,7 +11,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.cjs')
     },
     title: 'Operation Panel'
   });
