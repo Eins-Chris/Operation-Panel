@@ -1,0 +1,12 @@
+.content {
+    position: fixed;
+    bottom: 0;
+    left: 11vw;
+    height: -webkit-fill-available;
+    width: 88vw;
+}
+
+.content .pane {
+    border: none;
+    margin: 0;
+}

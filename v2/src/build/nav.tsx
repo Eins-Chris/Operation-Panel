@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import "../styles/nav.css";
-import { MenuIC, HomeIC, UploadIC, LoadIC, PlusIC } from "./icons.tsx";
+import React, { useEffect, useRef, useState } from 'react'
+import '../styles/nav.css'
+import { MenuIC, HomeIC, NaviIC, InformationIC, SettingsIC, UsersIC, InstructionIC, FavouritesIC } from './icons.tsx'
 
 type NavProps = {
-    site: string;
     setSite: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Nav = ({ site, setSite }: NavProps) => {
+const Nav = ({ setSite }: NavProps) => {
     const [open, setOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
@@ -68,36 +67,30 @@ const Nav = ({ site, setSite }: NavProps) => {
                     >
                         <li role="menutext" tabIndex={-1} className="menutext">General</li>
                         <li role="menuitem" tabIndex={-1} className="pane">
-                            <button tabIndex={-1} onClick={() => setSite('info')}>Information</button>
+                            <button tabIndex={-1} onClick={() => setSite('information')}><InformationIC small={true} /> Information</button>
                         </li>
                         <li role="menuitem" tabIndex={-1} className="pane">
-                            <button tabIndex={-1} onClick={() => setSite('info')}>Instructions</button>
+                            <button tabIndex={-1} onClick={() => setSite('instructions')}><InstructionIC small={true} /> Instructions</button>
                         </li>
                         <li role="menusplit" tabIndex={-1} className="menusplit"></li>
                         <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
                         <li role="menuitem" tabIndex={-1} className="pane">
-                            <button tabIndex={-1} onClick={() => setSite('setting-devices')}>Settings</button>
+                            <button tabIndex={-1} onClick={() => setSite('settings')}><SettingsIC small={true} /> Settings</button>
                         </li>
                         <li role="menuitem" tabIndex={-1} className="pane">
-                            <button tabIndex={-1} onClick={() => setSite('setting-user')}>
-                                Select User
-                                {/* Datenbank Shit - Wenn kein User selected ist: Select User, wenn einer selected is: Selected User: userID */}
-                            </button>
+                            <button tabIndex={-1} onClick={() => setSite('select_user')}><UsersIC small={true} /> Select User</button>
                         </li>
                     </ul>
                 </div>
                 <button className="option pane" tabIndex={-1} onClick={() => setSite('home')}>
                     <HomeIC />
                 </button>
-                {/* <button className="option pane" tabIndex={-1} onClick={() => console.log("ÖLKJ")}>
-                    <UploadIC />
+                <button className="option pane" tabIndex={-1} onClick={() => setSite('favourites')}>
+                    <FavouritesIC />
                 </button>
-                <button className="option pane" tabIndex={-1} onClick={() => console.log("ÖLKJ")}>
-                    <LoadIC />
+                <button className="option pane" tabIndex={-1} onClick={() => setSite('navigation')}>
+                    <NaviIC />
                 </button>
-                <button className="option pane" tabIndex={-1}>
-                    <PlusIC />
-                </button> */}
             </div>
         </nav>
     )

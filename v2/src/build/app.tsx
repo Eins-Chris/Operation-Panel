@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import '../styles/app.css'
+import Content from './content.tsx'
 import Nav from './nav.tsx'
 
 const App = () => {
@@ -7,10 +8,12 @@ const App = () => {
 
     return (
         <>
-            {/* <Content site={site} /> */}
-            <Nav site={site} setSite={setSite} />
+            <div className="content pane">
+                <Content site={site} />
+            </div>
+            <Nav setSite={setSite} />
         </>
     );
-};
+}
 
 export default App;
