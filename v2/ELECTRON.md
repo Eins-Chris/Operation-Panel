@@ -64,8 +64,9 @@ This will launch the Electron app loading the built files from the `docs` folder
 ```
 .
 ├── electron/
-│   ├── main.js          # Electron main process
-│   └── preload.js       # Preload script for secure IPC
+│   ├── main.cjs         # Electron main process (CommonJS)
+│   ├── preload.cjs      # Preload script for secure IPC (CommonJS)
+│   └── config.cjs       # Shared configuration (CommonJS)
 ├── src/                 # React application source
 ├── docs/                # Built web application (Vite output)
 └── dist-electron/       # Electron build output
@@ -77,7 +78,7 @@ The Electron configuration is defined in `package.json`:
 
 - **appId**: com.operationpanel.app
 - **productName**: Operation Panel
-- **main**: electron/main.js
+- **main**: electron/main.cjs (CommonJS module)
 
 ## Security
 

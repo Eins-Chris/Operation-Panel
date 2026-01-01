@@ -11,9 +11,9 @@ The v2 version has been configured with Electron support:
 ```
 v2/
 ├── electron/
-│   ├── main.js          # Electron main process
-│   ├── preload.js       # Secure preload script
-│   └── config.js        # Shared configuration
+│   ├── main.cjs         # Electron main process (CommonJS)
+│   ├── preload.cjs      # Secure preload script (CommonJS)
+│   └── config.cjs       # Shared configuration (CommonJS)
 ├── src/                 # React application source
 ├── docs/                # Built web application (Vite output)
 ├── package.json         # Updated with Electron scripts and config
@@ -23,21 +23,24 @@ v2/
 
 ### Main Components
 
-#### 1. Electron Main Process (`electron/main.js`)
+#### 1. Electron Main Process (`electron/main.cjs`)
 - Creates and manages the BrowserWindow
 - Handles application lifecycle events
 - Loads the app from Vite dev server (development) or built files (production)
 - Implements cross-platform window management
 - Configures secure webPreferences
+- Uses CommonJS (.cjs) to work with "type": "module" in package.json
 
-#### 2. Preload Script (`electron/preload.js`)
+#### 2. Preload Script (`electron/preload.cjs`)
 - Provides secure bridge between main and renderer processes
 - Uses contextBridge API for safe IPC
 - Exposes minimal API surface (platform information)
+- Uses CommonJS (.cjs) format
 
-#### 3. Configuration (`electron/config.js`)
+#### 3. Configuration (`electron/config.cjs`)
 - Centralized port configuration
 - Ensures consistency between Vite and Electron
+- Uses CommonJS (.cjs) format
 
 ## Security Features
 
@@ -97,9 +100,10 @@ Run production build: `npm run electron:start`
 ### Configuration Changes
 
 #### package.json
-- `main`: Points to `electron/main.js`
+- `main`: Points to `electron/main.cjs` (CommonJS module)
 - New scripts: `electron:dev`, `electron:build`, `electron:start`
 - `build` section: electron-builder configuration with platform targets
+- `type: "module"` enables ES modules for React/Vite code
 
 #### vite.config.ts
 - `base: './'` - Relative paths for Electron
@@ -129,6 +133,7 @@ Detailed usage instructions are provided in `ELECTRON.md` in the v2 directory, i
 
 ## Notes
 
+- The Electron files use `.cjs` extension (CommonJS) to maintain compatibility with `require()` statements while `package.json` has `"type": "module"` for ES modules in the React/Vite code
 - The existing TypeScript compilation errors in `src/build/database.tsx` are pre-existing issues not related to this implementation
 - Pre-built documentation exists in the `docs/` directory for v2
 - The application uses Dexie.js for IndexedDB, which works seamlessly in Electron
