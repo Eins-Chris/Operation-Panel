@@ -1,9 +1,9 @@
 .content {
     position: fixed;
     bottom: 0;
-    left: 11vw;
+    right: 0;
     height: -webkit-fill-available;
-    width: 88vw;
+    width: 89vw;
 }
 
 .content .pane {
