@@ -1,15 +1,15 @@
 # Electron Implementation Summary
 
 ## Overview
-This implementation adds Electron framework support to the Operation Panel application, enabling it to run as a standalone desktop application for Windows, macOS, and Linux.
+This implementation adds Electron framework support to the Operation Panel v2 application, enabling it to run as a standalone desktop application for Windows, macOS, and Linux.
 
 ## Architecture
 
 ### Project Structure
-Both v1 and v2 versions have been configured with identical Electron support:
+The v2 version has been configured with Electron support:
 
 ```
-v1/ (and v2/)
+v2/
 ├── electron/
 │   ├── main.js          # Electron main process
 │   ├── preload.js       # Secure preload script
@@ -112,7 +112,7 @@ Run production build: `npm run electron:start`
 
 ## Usage Instructions
 
-Detailed usage instructions are provided in `ELECTRON.md` files in both v1 and v2 directories, including:
+Detailed usage instructions are provided in `ELECTRON.md` in the v2 directory, including:
 - Prerequisites and setup
 - Development workflow
 - Building for production
@@ -130,5 +130,6 @@ Detailed usage instructions are provided in `ELECTRON.md` files in both v1 and v
 ## Notes
 
 - The existing TypeScript compilation errors in `src/build/database.tsx` are pre-existing issues not related to this implementation
-- Pre-built documentation exists in `docs/` directories for both versions
+- Pre-built documentation exists in the `docs/` directory for v2
 - The application uses Dexie.js for IndexedDB, which works seamlessly in Electron
+- Only v2 has been configured with Electron support as requested

@@ -10,14 +10,6 @@ lerna-debug.log*
 node_modules
 *.local
 
-# Electron build output
-dist-electron
-*.exe
-*.dmg
-*.deb
-*.rpm
-*.AppImage
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
