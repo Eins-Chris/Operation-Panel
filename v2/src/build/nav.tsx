@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import type { Sites } from "./types.tsx";
 import "../styles/nav.css";
 import { MenuIC, HomeIC, UploadIC, LoadIC, PlusIC } from "./icons.tsx";
 
 type NavProps = {
     site: string;
-    setSite: React.Dispatch<React.SetStateAction<Sites>>;
-    onSetContent: () => void;
-    onResetContent: () => void;
+    setSite: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Nav = ({ site, setSite, onSetContent, onResetContent }: NavProps) => {
+const Nav = ({ site, setSite }: NavProps) => {
     const [open, setOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const buttonRef = useRef<HTMLButtonElement>(null)
@@ -45,78 +42,63 @@ const Nav = ({ site, setSite, onSetContent, onResetContent }: NavProps) => {
 
     return (
         <nav className="navbar pane">
-            <div className={`container dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
-                <button 
-                className={`square-btn ${open ? "open" : ""} pane`}
-                aria-haspopup="true"
-                aria-expanded={open}
-                aria-controls="dropdownMenu"
-                title="Menu" 
-                tabIndex={-1}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    toggleMenu();
-                }}
-                ref={buttonRef}
-                >
-                    <MenuIC open={open} />
-                </button>
-
-                <ul
-                id="dropdownMenu"
-                className="dropdown-menu pane"
-                role="menu"
-                aria-hidden={!open}
-                ref={menuRef}
-                >
-                    <li role="menutext" tabIndex={-1} className="menutext">Devices</li>
-                    <li role="menuitem" tabIndex={-1} className="pane">
-                        <button tabIndex={-1} onClick={() => setSite('TEMPORARY')}>temporary</button>
-                    </li>
-                    <li role="menusplit" tabIndex={-1} className="menusplit"></li>
-                    <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
-                    <li role="menuitem" tabIndex={-1} className="pane">
-                        <button tabIndex={-1} onClick={() => setSite('setting-devices')}>Edit Devices</button>
-                    </li>
-                    <li role="menuitem" tabIndex={-1} className="pane">
-                        <button tabIndex={-1} onClick={() => setSite('setting-config-database')}>Config / Database</button>
-                    </li>
-                    <li role="menuitem" tabIndex={-1} className="pane">
-                        <button tabIndex={-1} onClick={() => setSite('setting-user')}>
-                            Select User
-                            {/* Datenbank Shit - Wenn kein User selected ist: Select User, wenn einer selected is: Selected User: userID */}
-                        </button>
-                    </li>
-                    <li role="menusplit" tabIndex={-1} className="menusplit"></li>
-                    <li role="menutext" tabIndex={-1} className="menutext">General</li>
-                    <li role="menuitem" tabIndex={-1} className="pane">
-                        <button tabIndex={-1} onClick={() => setSite('info')}>Information</button>
-                    </li>
-                </ul>
+            <div className="info">
+                <p>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
             </div>
-            <div className="container home-container" >
-                <button className="square-btn pane" tabIndex={-1} onClick={() => setSite('home')}>
+            <div className="controlls">
+                <div className={`dropdown-container ${open ? "open" : ""}`} ref={containerRef}>
+                    <button 
+                    className="option pane dropdownBtn"
+                    tabIndex={-1}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMenu();
+                    }}
+                    ref={buttonRef}
+                    >
+                        <MenuIC open={open} />
+                    </button>
+
+                    <ul
+                    id="dropdownMenu"
+                    className="dropdown-menu pane"
+                    role="menu"
+                    aria-hidden={!open}
+                    ref={menuRef}
+                    >
+                        <li role="menutext" tabIndex={-1} className="menutext">General</li>
+                        <li role="menuitem" tabIndex={-1} className="pane">
+                            <button tabIndex={-1} onClick={() => setSite('info')}>Information</button>
+                        </li>
+                        <li role="menuitem" tabIndex={-1} className="pane">
+                            <button tabIndex={-1} onClick={() => setSite('info')}>Instructions</button>
+                        </li>
+                        <li role="menusplit" tabIndex={-1} className="menusplit"></li>
+                        <li role="menutext" tabIndex={-1} className="menutext">Actions</li>
+                        <li role="menuitem" tabIndex={-1} className="pane">
+                            <button tabIndex={-1} onClick={() => setSite('setting-devices')}>Settings</button>
+                        </li>
+                        <li role="menuitem" tabIndex={-1} className="pane">
+                            <button tabIndex={-1} onClick={() => setSite('setting-user')}>
+                                Select User
+                                {/* Datenbank Shit - Wenn kein User selected ist: Select User, wenn einer selected is: Selected User: userID */}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <button className="option pane" tabIndex={-1} onClick={() => setSite('home')}>
                     <HomeIC />
                 </button>
-            </div>
-            <div className="navsplit"></div>
-            <div className="container safeToDataBase-container">
-                <button className="square-btn pane" tabIndex={-1} onClick={() => onSetContent()}>
+                {/* <button className="option pane" tabIndex={-1} onClick={() => console.log("ÖLKJ")}>
                     <UploadIC />
                 </button>
-            </div>
-            <div className="container loadFromDataBase-container">
-                <button className="square-btn pane" tabIndex={-1} onClick={() => onResetContent()}>
+                <button className="option pane" tabIndex={-1} onClick={() => console.log("ÖLKJ")}>
                     <LoadIC />
                 </button>
-            </div>
-            <div className="navsplit"></div>
-            <div className={`container add-container ${site.includes("device") ? "visible" : ""}`} onClick={() => console.log(" ")}>
-                <button className="square-btn pane">
+                <button className="option pane" tabIndex={-1}>
                     <PlusIC />
-                </button>
+                </button> */}
             </div>
-            <p>Current: [{site}]</p>
         </nav>
     )
 }

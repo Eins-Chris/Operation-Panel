@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
-import "../styles/background.css";
+import { useEffect, useRef } from 'react'
+import '../styles/background.css'
 
 type BackgroundProps = {
     url?: string;
 };
 
-export const Background = ({ url }: BackgroundProps) => {
+const Background = ({ url }: BackgroundProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
@@ -123,3 +123,5 @@ export const Background = ({ url }: BackgroundProps) => {
 
     return <canvas ref={canvasRef} id="background-canvas" />;
 }
+
+export default Background;
