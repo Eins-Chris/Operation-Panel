@@ -1,1 +1,0 @@
-import{j as e}from"./index-CcNcd4RO.js";const t=()=>e.jsx(e.Fragment,{children:e.jsx("iframe",{src:"https://www.thw-amberg.de/",style:{width:"100%",height:"100%",border:"none"}})});export{t as select_user};

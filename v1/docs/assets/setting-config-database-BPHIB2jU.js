@@ -1,1 +1,0 @@
-import{c,j as r}from"./index-Dt4K-0cR.js";const o=()=>{const t=c.c(3);{let e;return t[0]===Symbol.for("react.memo_cache_sentinel")?(e=r.jsx(s,{}),t[0]=e):e=t[0],e}},s=()=>{const t=c.c(1);let e;return t[0]===Symbol.for("react.memo_cache_sentinel")?(e=r.jsx(r.Fragment,{children:r.jsx("p",{children:"InteractiveTree"})}),t[0]=e):e=t[0],e};export{o as DatabaseInfo};

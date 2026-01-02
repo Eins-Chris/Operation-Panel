@@ -1,0 +1,1 @@
+import{j as e}from"./index-BVyaNz0E.js";const n=()=>e.jsx(e.Fragment,{children:e.jsxs("div",{className:"pane",children:[e.jsx("p",{children:"Startseite Dropdown"}),e.jsx("p",{children:"Seitenleiste Anordnung"}),e.jsx("p",{})]})});export{n as settings};
