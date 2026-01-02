@@ -28,9 +28,7 @@
 ```txt
 192.168.178.1:3001/{backendApplication}/{applicationControlls}
 ```
-```
 backendApplication:
-```
 - Spotify
 - TopDown Informationsverarbeitung
 - Navigation
@@ -42,6 +40,4 @@ backendApplication:
 - "R.A.I.N.E.R, spiel 3 Uhr Nachts" -> dafür auf dem Server Spotify installieren, damit selbstständig Songs abgespielt werden können, unabhängig vom UI.
 - "R.A.I.N.E.R, zeig mir das TopDown" -> soll die Seite TopDown öffnen, dafür muss in app.tsx die variable site geändert werden. 
 
-> Dafür muss wahrscheinlich noch eine andere Art 
-> der Kommunikation zwischen dem UI und R.A.I.N.E.R 
-> bestehen, das muss ich mir noch überlegen.
+> Dafür muss wahrscheinlich noch eine andere Art der Kommunikation zwischen dem UI und R.A.I.N.E.R bestehen, das muss ich mir noch überlegen.
