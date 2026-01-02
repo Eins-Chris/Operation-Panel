@@ -20,3 +20,14 @@ createRoot(document.getElementById('root')!).render(
         <Main />
     </StrictMode>
 );
+
+/* 
+    R.A.I.N.E.R
+    
+    Raging
+    Assistant &
+    Intelligent
+    Neuronal
+    Extrahuman
+    Render
+ */
