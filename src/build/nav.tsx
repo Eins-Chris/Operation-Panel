@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import '../styles/nav.css'
-import { MenuIC, HomeIC, NaviIC, InformationIC, SettingsIC, UsersIC, InstructionIC, FavouritesIC, TopdownIC, SpotifyIC } from './icons.tsx'
+import { MenuIC, HomeIC, NaviIC, InformationIC, SettingsIC, UsersIC, InstructionIC, FavouritesIC, TopdownIC, SpotifyIC } from '../resources/icons.tsx'
 
 type NavProps = {
     setSite: React.Dispatch<React.SetStateAction<string>>;
@@ -78,7 +78,7 @@ const Nav = ({ setSite }: NavProps) => {
                             <button tabIndex={-1} onClick={() => setSite('settings')}><SettingsIC small={true} /> Settings</button>
                         </li>
                         <li role="menuitem" tabIndex={-1} className="pane">
-                            <button tabIndex={-1} onClick={() => setSite('select_user')}><UsersIC small={true} /> Select User</button>
+                            <button tabIndex={-1} onClick={() => setSite('change_user')}><UsersIC small={true} /> Change User</button>
                         </li>
                     </ul>
                 </div>

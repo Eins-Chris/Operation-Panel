@@ -26,9 +26,11 @@
 
 ## Backend Aufbau
 ```txt
-192.168.178.1:3001/{backendApplication}/{applicationControlls}
+192.168.178.1:3001/{sessionID}/{backendApplication}/{applicationControlls}
 ```
 backendApplication:
+- Session Start
+- Session Kill
 - Spotify
 - TopDown Informationsverarbeitung
 - Navigation
