@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../styles/app.css'
 import Content from './content.tsx'
 import Nav from './nav.tsx'
 
 const App = () => {
     const [site, setSite] = useState("home");
+
+    console.log("NoUseEffect");
+    useEffect(() => {
+        console.log("UseEffect");
+    });
 
     return (
         <>
